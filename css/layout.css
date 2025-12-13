@@ -1,0 +1,484 @@
+/* =========================================
+   1. RESET E ESTRUTURA BÁSICA
+   ========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body, html {
+    height: 100%;
+    overflow: hidden;
+}
+
+/* =========================================
+   2. BARRA SUPERIOR (TOPBAR) - PRETO
+   ========================================= */
+.topbar {
+    width: 100%;
+    height: 70px;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 2000 !important;
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-menu {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-menu:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-menu img {
+    width: 28px;
+    height: 28px;
+    filter: brightness(0) invert(1);
+}
+
+.logo-estado {
+    height: 50px;
+    object-fit: contain;
+}
+
+/* =========================================
+   3. LAYOUT PRINCIPAL
+   ========================================= */
+.main-container {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 70px);
+}
+
+/* --- SIDEBAR --- */
+.sidebar-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    display: flex;
+    z-index: 1600 !important;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.3);
+}
+
+.sidebar-container.closed {
+    transform: translateX(-100%);
+}
+
+.btn-close-mobile {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: #333;
+    z-index: 1700;
+    cursor: pointer;
+}
+
+/* Ícones Laterais */
+.icon-bar {
+    width: 60px;
+    background-color: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.icon-item {
+    width: 100%;
+    padding: 15px 0;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-left: 4px solid transparent;
+}
+
+.icon-item img {
+    width: 24px;
+    height: 24px;
+    filter: invert(0.7);
+}
+
+.icon-item:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-left: 4px solid #555;
+}
+
+.icon-item.active {
+    background-color: #333;
+    border-left: 4px solid #fff;
+}
+.icon-item.active img {
+    filter: invert(1);
+}
+
+/* Conteúdo Painel */
+.content-panel {
+    width: 320px;
+    background-color: white;
+    padding: 20px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.panel-section {
+    display: none;
+    padding-bottom: 50px;
+}
+
+.panel-section.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+.panel-section h3 {
+    color: #1a1a1a;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    text-transform: uppercase;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   4. FORMULÁRIO
+   ========================================= */
+.input-padrao {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+.input-padrao:focus {
+    border-color: #1a1a1a;
+    outline: none;
+    background-color: #fff;
+}
+
+.filter-group { margin-bottom: 15px; }
+.filter-group label { font-weight: 600; color: #333; font-size: 13px; }
+
+.btn-aplicar {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+    background-color: #1a1a1a;
+    color: white;
+}
+.btn-aplicar:hover { background-color: #333; }
+
+/* =========================================
+   5. RODAPÉ DESENVOLVEDOR (ICONE WHATSAPP TROCA IMAGEM)
+   ========================================= */
+.dev-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dev-footer p {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.dev-footer strong {
+    display: block;
+    color: #1a1a1a;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Configuração do Botão */
+.btn-whatsapp {
+    display: block; /* Importante para aceitar largura/altura */
+    width: 32px;
+    height: 32px;
+    
+    /* IMAGEM PADRÃO (PRETA) */
+    background-image: url('../icones/icones_menu/whatsapp_preto.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+/* HOVER: MUDA PARA IMAGEM VERDE */
+.btn-whatsapp:hover {
+    background-image: url('../icones/icones_menu/whatsapp_verde.png');
+    transform: scale(1.1); /* Leve aumento ao passar o mouse */
+}
+
+/* =========================================
+   6. MAPA, LEGENDAS E MOBILE
+   ========================================= */
+.map-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: none;
+}
+
+.layer-switcher {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1100;
+    background-color: white;
+    padding: 5px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    display: flex;
+    gap: 5px;
+}
+
+.layer-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    outline: none;
+}
+.layer-btn.active {
+    background-color: #1a1a1a;
+    color: white;
+}
+
+.legenda-grupo h4 {
+    color: #555;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.legenda-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+.legenda-item img {
+    width: 28px;
+    height: 28px;
+    margin-right: 12px;
+}
+.legenda-item span {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.lista-sobre li {
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #555;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    border-left: 3px solid #1a1a1a;
+}
+.lista-sobre li strong {
+    color: #1a1a1a;
+}
+
+.mobile-overlay {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1550;
+}
+
+@media (max-width: 600px) {
+    .sidebar-container {
+        width: 100%;
+        max-width: 100%;
+    }
+    .content-panel {
+        width: calc(100% - 60px);
+    }
+    .btn-close-mobile {
+        display: block;
+    }
+    #sidebar-container:not(.closed) + .mobile-overlay {
+        display: block;
+    }
+}
+
+.detalhe-item strong { color: #1a1a1a; display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; }
+.detalhe-item { margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+.detalhe-item span { font-size: 14px; color: #333; }
+
+/* =========================================
+   ESTILOS DO PAINEL ADMIN (AUTH)
+   ========================================= */
+
+/* Wrapper do botão */
+.auth-wrapper {
+    position: relative;
+    width: 100%;
+    height: 60px; /* Altura fixa para manter layout ao trocar */
+}
+
+/* Botão Principal de Acesso */
+.btn-auth {
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Texto na esq, icone na dir */
+    padding: 0 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-auth:hover {
+    background-color: #e0e0e0;
+    border-color: #bbb;
+}
+
+.btn-auth span {
+    font-weight: 700;
+    color: #333;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.padlock-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+}
+
+/* Container da Senha (substitui o botão) */
+.password-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    animation: fadeIn 0.2s;
+}
+
+.input-pass {
+    flex: 1;
+    height: 40px;
+    padding: 0 10px;
+    border: 2px solid #1a1a1a;
+    border-radius: 4px;
+    outline: none;
+}
+
+.btn-ok {
+    width: 40px;
+    height: 40px;
+    background-color: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-cancel {
+    width: 30px;
+    height: 40px;
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 20px;
+    cursor: pointer;
+}
+.btn-cancel:hover { color: red; }
+
+/* Cabeçalho do Formulário Admin */
+.form-header-admin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.form-header-admin h4 {
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.btn-sair {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+.btn-sair:hover { background: #eee; }
+
+.highlight-group {
+    background-color: #eef;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccd;
+}

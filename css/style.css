@@ -1,0 +1,17 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+    background-color: #ddd; /* Cor de fundo enquanto carrega */
+}
+
+/* Ajuste opcional para os popups */
+.leaflet-popup-content-wrapper {
+    border-radius: 4px;
+}

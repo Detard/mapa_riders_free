@@ -1,0 +1,25 @@
+{
+"type": "FeatureCollection",
+"name": "museu",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Instituição": "Museu do Piauí - Casa de Odilon Nunes", "Cidade": "Teresina", "Latitude": -5.08963, "Longitude": -42.817511 }, "geometry": { "type": "Point", "coordinates": [ -42.817511, -5.08963 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu de Arte Sacra Dom Paulo Libório", "Cidade": "Teresina", "Latitude": -5.09055, "Longitude": -42.813 }, "geometry": { "type": "Point", "coordinates": [ -42.813, -5.09055 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu de Arqueologia e Paleontologia da UFPI", "Cidade": "Teresina", "Latitude": -5.056944, "Longitude": -42.793611 }, "geometry": { "type": "Point", "coordinates": [ -42.793611, -5.056944 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu do Trem de Parnaíba", "Cidade": "Parnaíba", "Latitude": -2.9022080489679731, "Longitude": -41.780267097587476 }, "geometry": { "type": "Point", "coordinates": [ -41.780267097587476, -2.902208048967973 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu Dom Avelar Brandão Vilela", "Cidade": "Teresina", "Latitude": -5.1011997242407059, "Longitude": -42.791645885672473 }, "geometry": { "type": "Point", "coordinates": [ -42.791645885672473, -5.101199724240706 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu do Mar do Delta do Parnaíba", "Cidade": "Parnaíba", "Latitude": -2.900411, "Longitude": -41.780319 }, "geometry": { "type": "Point", "coordinates": [ -41.780319, -2.900411 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu Ozildo Albano", "Cidade": "Picos", "Latitude": -7.0838106578548308, "Longitude": -41.470472728141672 }, "geometry": { "type": "Point", "coordinates": [ -41.470472728141672, -7.083810657854831 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu de Arte Sacra de Oeiras", "Cidade": "Oeiras", "Latitude": -7.01578, "Longitude": -42.131032 }, "geometry": { "type": "Point", "coordinates": [ -42.131032, -7.01578 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu de Perypery", "Cidade": "Piripiri", "Latitude": -4.2752776673623565, "Longitude": -41.777149195950024 }, "geometry": { "type": "Point", "coordinates": [ -41.777149195950024, -4.275277667362356 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Monumento Nacional Heróis do Jenipapo", "Cidade": "Campo Maior", "Latitude": -4.7828271494463799, "Longitude": -42.118277425436709 }, "geometry": { "type": "Point", "coordinates": [ -42.118277425436709, -4.78282714944638 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Memorial Tertuliano Brandão Filho", "Cidade": "Pedro II", "Latitude": -4.4267074398126471, "Longitude": -41.459386090892131 }, "geometry": { "type": "Point", "coordinates": [ -41.459386090892131, -4.426707439812647 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu De Pedro II Pi", "Cidade": "Pedro II", "Latitude": -4.4267930197942151, "Longitude": -41.459253247846711 }, "geometry": { "type": "Point", "coordinates": [ -41.459253247846711, -4.426793019794215 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu dos Povos Indígenas Anízia Maria", "Cidade": "Lagoa de São Francisco", "Latitude": -4.3409421813020312, "Longitude": -41.553075651288111 }, "geometry": { "type": "Point", "coordinates": [ -41.553075651288111, -4.340942181302031 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Memorial da Balaiada*", "Cidade": "Caxias (MA)", "Latitude": -4.865436, "Longitude": -43.36214 }, "geometry": { "type": "Point", "coordinates": [ -43.36214, -4.865436 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu do Homem Americano", "Cidade": "São Raimundo Nonato", "Latitude": -9.0326345406715038, "Longitude": -42.700951009849675 }, "geometry": { "type": "Point", "coordinates": [ -42.700951009849675, -9.032634540671504 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu do Divino", "Cidade": "Amarante", "Latitude": -6.2457021440631442, "Longitude": -42.853676368713352 }, "geometry": { "type": "Point", "coordinates": [ -42.853676368713352, -6.245702144063144 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu das Letras do Piauí - Casa Odilon Nunes", "Cidade": "Amarante", "Latitude": -6.2473585294552247, "Longitude": -42.853822172788135 }, "geometry": { "type": "Point", "coordinates": [ -42.853822172788135, -6.247358529455225 ] } },
+{ "type": "Feature", "properties": { "Instituição": "Museu da Natureza", "Cidade": "Coronel José Dias", "Latitude": -8.8337051911650306, "Longitude": -42.539736711598096 }, "geometry": { "type": "Point", "coordinates": [ -42.539736711598096, -8.833705191165031 ] } }
+]
+}
