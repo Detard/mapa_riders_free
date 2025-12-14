@@ -2,7 +2,7 @@
 // 1. LINKS DAS PLANILHAS
 // =========================================
 const URL_PLANILHA_VIAGENS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQavLOwuqDZaqsPmsr7MaDYKp-FYNq2cNXLtxeFLr3ruunBhmY8TBRlHycwXiicnzDAK9HNT2ZNwcxK/pub?gid=0&single=true&output=csv";
-const URL_PLANILHA_PONTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQIC0CWTecFsAAj75DdMCCtCLu1Tlj0Vv2IL_DXwdatGXrBhN1NRA_dUEh_FuIU3OuZI4EAgTqVFafx/pub?gid=1754543034&single=true&output=csv";
+const URL_PLANILHA_PONTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQavLOwuqDZaqsPmsr7MaDYKp-FYNq2cNXLtxeFLr3ruunBhmY8TBRlHycwXiicnzDAK9HNT2ZNwcxK/pub?gid=2127162117&single=true&output=csv";
 
 // =========================================
 // 2. CONFIGURAÇÃO DE ÍCONES
@@ -50,6 +50,7 @@ for (let key in iconMap) {
     layers[key] = L.markerClusterGroup(clusterConfig);
 }
 
+// Inicializa a camada de viagens
 if(layers['Viagem Realizada']) {
     map.addLayer(layers['Viagem Realizada']);
 }
@@ -63,7 +64,7 @@ window.toggleLayer = function(nomeCategoria, checked) {
 };
 
 // =========================================
-// 5. FUNÇÕES AUXILIARES (LINK DRIVE & LIGHTBOX)
+// 5. FUNÇÕES AUXILIARES
 // =========================================
 
 function criarIcone(nomeArquivo) {
@@ -83,70 +84,76 @@ function csvToJSON(csvText) {
     });
 }
 
-// Converte link do Drive para Link de Imagem Direta
-function converterLinkDrive(url) {
+function converterLinkDrive(url, tamanho = 'w1000') {
+    if (!url) return "";
     if (!url.includes('drive.google.com')) return url;
-    
-    // Tenta extrair o ID com Regex (mais seguro)
-    // Pega o que está depois de /d/ e antes de / ou ?
     const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    
     if (match && match[1]) {
         const id = match[1];
-        // URL direta de exibição do Google
-        return `https://drive.google.com/uc?export=view&id=${id}`;
+        return `https://drive.google.com/thumbnail?id=${id}&sz=${tamanho}`;
     }
     return url;
 }
 
-// Injeta o HTML do visualizador na página
-function injectLightbox() {
-    if (!document.getElementById('lightbox-overlay')) {
-        const div = document.createElement('div');
-        div.id = 'lightbox-overlay';
-        div.className = 'lightbox-overlay';
-        div.innerHTML = `
-            <span class="lightbox-close" onclick="fecharImagem()">×</span>
-            <img id="lightbox-img" class="lightbox-img" src="">
-            <div id="lightbox-caption" class="lightbox-caption"></div>
-        `;
-        document.body.appendChild(div);
-        
-        // Fechar ao clicar fora da imagem
-        div.addEventListener('click', (e) => {
-            if (e.target === div) fecharImagem();
-        });
-    }
-}
-// Chama a injeção ao carregar
-injectLightbox();
+// =========================================
+// 6. GESTÃO DE ESTADOS (.GEOJSON) - NOVO!
+// =========================================
+const estadosCarregados = new Set(); // Evita carregar o mesmo estado 2x
 
-// Funções Globais para abrir/fechar
-window.abrirImagem = function(src, legenda) {
-    const overlay = document.getElementById('lightbox-overlay');
-    const img = document.getElementById('lightbox-img');
-    const caption = document.getElementById('lightbox-caption');
+function carregarFronteira(uf) {
+    // Normaliza para garantir que é sigla (ex: "PI", "MA")
+    const sigla = uf.trim().toUpperCase();
     
-    img.src = src;
-    caption.innerText = legenda || '';
-    overlay.style.display = 'flex';
-};
+    // Se não for sigla válida ou já tiver carregado, ignora
+    if (sigla.length !== 2 || estadosCarregados.has(sigla)) return;
 
-window.fecharImagem = function() {
-    document.getElementById('lightbox-overlay').style.display = 'none';
-    document.getElementById('lightbox-img').src = '';
-};
+    // Marca como carregado para não repetir
+    estadosCarregados.add(sigla);
+
+    const url = `data/${sigla}.geojson`;
+
+    // Define o estilo: PI tem destaque, os outros são discretos
+    const estilo = (sigla === 'PI') 
+        ? { fillColor: '#1a1a1a', weight: 1.5, color: 'white', fillOpacity: 0.15 } // Estilo do PI (Destaque)
+        : { fillColor: '#555555', weight: 1, color: '#888', fillOpacity: 0.1 };   // Estilo dos Outros
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("Arquivo não encontrado");
+            return response.json();
+        })
+        .then(data => {
+            // Adiciona ao mapa com o estilo definido e joga para trás (back) para não cobrir marcadores
+            const layer = L.geoJSON(data, { 
+                style: estilo, 
+                interactive: false // Não atrapalha o clique no mapa
+            }).addTo(map);
+            
+            layer.bringToBack(); // Garante que fica atrás dos ícones
+        })
+        .catch(err => {
+            console.log(`Não foi possível carregar o mapa de: ${sigla} (Arquivo data/${sigla}.geojson não existe?)`);
+        });
+}
 
 // =========================================
-// 6. CARREGAMENTO DE DADOS
+// 7. CARREGAMENTO DE DADOS (ATUALIZADO)
 // =========================================
 
 function carregarDadosGoogle(url, tipoOrigem) {
-    if(url.includes("COLE_O_LINK")) return;
+    if(!url || url.includes("COLE_O_LINK")) return;
 
     fetch(url).then(r => r.text()).then(csvText => {
         const dados = csvToJSON(csvText);
         dados.forEach(d => {
+            
+            // --- NOVA LÓGICA: Carrega mapa do estado baseado na coluna UF ---
+            // Só faz isso se estivermos lendo a planilha de VIAGENS (para não duplicar lógica)
+            if (tipoOrigem === 'Viagem' && d['UF']) {
+                carregarFronteira(d['UF']);
+            }
+            // -------------------------------------------------------------
+
             let lat = parseFloat(d['Latitude']?.replace(',', '.'));
             let lng = parseFloat(d['Longitude']?.replace(',', '.'));
 
@@ -196,12 +203,8 @@ function carregarDadosGoogle(url, tipoOrigem) {
 carregarDadosGoogle(URL_PLANILHA_VIAGENS, 'Viagem');
 carregarDadosGoogle(URL_PLANILHA_PONTOS, 'Ponto Turístico');
 
-fetch('data/PI.geojson').then(r=>r.json()).then(d => {
-    L.geoJSON(d, { style: { fillColor:'#1a1a1a', weight:1, color:'white', fillOpacity:0.1 } }).addTo(map);
-}).catch(e => console.log("Sem base PI"));
-
 // =========================================
-// 7. SIDEBAR E DETALHES
+// 8. SIDEBAR E DETALHES
 // =========================================
 
 window.abrirDetalhesMarker = function(btn) {
@@ -220,7 +223,6 @@ window.abrirDetalhesSidebar = function(dados) {
 
     const divConteudo = docPai.getElementById('conteudo-detalhes');
     
-    // Ícone Social no Título
     let htmlSocial = '';
     const socialLink = dados['Rede Social do Local'];
     if (socialLink && socialLink.length > 5) {
@@ -243,36 +245,62 @@ window.abrirDetalhesSidebar = function(dados) {
         </div>
     `;
 
-    // Carrossel de Fotos
     const linkFotos = dados['Link Fotos Drive'];
     if (linkFotos && linkFotos.length > 5) {
-        // Se tiver vírgula, entende que são múltiplos links
         if (linkFotos.includes(',')) {
             const urls = linkFotos.split(',');
             html += `<div class="carousel-container">`;
             
-            urls.forEach(rawUrl => {
+            const listaLinksLimpos = [];
+            urls.forEach(u => {
+                const limpo = u.trim();
+                if(limpo) listaLinksLimpos.push(converterLinkDrive(limpo, 'w3000')); 
+            });
+            const listaJSON = JSON.stringify(listaLinksLimpos).replace(/"/g, '&quot;');
+
+            urls.forEach((rawUrl, index) => {
                 const urlLimpa = rawUrl.trim();
                 if(urlLimpa) {
-                    // Converte para link direto
-                    const srcImagem = converterLinkDrive(urlLimpa);
-                    // IMPORTANTE: onclick abre a função abrirImagem()
-                    html += `<img src="${srcImagem}" class="carousel-img" onclick="window.abrirImagem('${srcImagem}', '${dados['Nome do Lugar']}')">`;
+                    const srcThumb = converterLinkDrive(urlLimpa, 'w500');
+                    html += `
+                        <img 
+                            src="${srcThumb}" 
+                            class="carousel-img" 
+                            referrerpolicy="no-referrer" 
+                            onclick="window.parent.abrirGaleria('${listaJSON}', ${index}, '${dados['Nome do Lugar']}')"
+                        >
+                    `;
                 }
             });
-            html += `</div><p style="font-size:11px; color:#888; text-align:center; margin-top:-15px; margin-bottom:20px;">(Clique para ampliar)</p>`;
+            html += `</div><p style="font-size:11px; color:#888; text-align:center; margin-top:-15px; margin-bottom:20px;">(Clique para abrir a galeria)</p>`;
         
         } else {
-            // Apenas 1 link (Provavelmente pasta)
-            html += `
-                <a href="${linkFotos}" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:10px; background:#0352AA; color:white; text-decoration:none; padding:12px; border-radius:8px; margin-bottom:20px; font-weight:bold;">
-                    <img src="icones/icones_menu/camera.png" style="width:20px; filter:brightness(0) invert(1);"> Ver Álbum de Fotos
-                </a>
-            `;
+            const urlLimpa = linkFotos.trim();
+            if(urlLimpa.includes('/file/d/')) {
+                 const srcThumb = converterLinkDrive(urlLimpa, 'w800');
+                 const srcFull = converterLinkDrive(urlLimpa, 'w3000');
+                 const listaJSON = JSON.stringify([srcFull]).replace(/"/g, '&quot;');
+
+                 html += `
+                    <div style="text-align:center; margin-bottom:15px;">
+                        <img 
+                            src="${srcThumb}" 
+                            class="carousel-img" 
+                            style="width:100%; height:auto; max-height:200px;" 
+                            referrerpolicy="no-referrer" 
+                            onclick="window.parent.abrirGaleria('${listaJSON}', 0, '${dados['Nome do Lugar']}')"
+                        >
+                    </div>`;
+            } else {
+                html += `
+                    <a href="${linkFotos}" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:10px; background:#0352AA; color:white; text-decoration:none; padding:12px; border-radius:8px; margin-bottom:20px; font-weight:bold;">
+                        <img src="icones/icones_menu/camera.png" style="width:20px; filter:brightness(0) invert(1);"> Ver Álbum de Fotos
+                    </a>
+                `;
+            }
         }
     }
 
-    // Grid de Informações
     html += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">`;
     const campos = [
         {k: 'Data da Viagem/Bate e Volta', l: '📅 Data'},
@@ -300,22 +328,32 @@ window.abrirDetalhesSidebar = function(dados) {
     divConteudo.innerHTML = html;
 };
 
-// Funções de Admin (Mantidas)
+// =========================================
+// 9. FUNÇÕES DE ADMINISTRAÇÃO (RECUPERADAS)
+// =========================================
+
+// Esta função recupera a lista para o Dropdown
 window.obterDadosParaEdicao = function(tipoAdmin) {
     const lista = [];
     for (let key in layers) {
         const grupo = layers[key];
         const ehViagem = (key === 'Viagem Realizada');
+        
         if (tipoAdmin === 'viagens' && ehViagem) {
-            grupo.eachLayer(l => lista.push({ id: L.Util.stamp(l), nome: l.dadosLocais['Nome do Lugar'] }));
+            grupo.eachLayer(l => {
+                if(l.dadosLocais) lista.push({ id: L.Util.stamp(l), nome: l.dadosLocais['Nome do Lugar'] });
+            });
         }
         else if (tipoAdmin === 'lugares' && !ehViagem) {
-            grupo.eachLayer(l => lista.push({ id: L.Util.stamp(l), nome: l.dadosLocais['Nome do Lugar'] }));
+            grupo.eachLayer(l => {
+                if(l.dadosLocais) lista.push({ id: L.Util.stamp(l), nome: l.dadosLocais['Nome do Lugar'] });
+            });
         }
     }
-    return lista;
+    return lista.sort((a, b) => a.nome.localeCompare(b.nome));
 };
 
+// Esta função preenche o formulário quando seleciona um item
 window.obterDadosPorId = function(id) {
     let dados = null;
     for (let key in layers) {

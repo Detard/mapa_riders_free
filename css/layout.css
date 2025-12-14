@@ -656,43 +656,75 @@ iframe {
     left: 0; 
     width: 100%; 
     height: 100%;
-    background: rgba(0,0,0,0.9); /* Fundo escuro */
-    z-index: 9999; /* Fica por cima de tudo */
-    display: none; /* Começa escondido */
+    background: rgba(0,0,0,0.95); /* Fundo bem escuro */
+    z-index: 99999 !important; /* MÁXIMA PRIORIDADE: Fica na frente de tudo */
+    display: none;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
 
-/* A imagem grande */
 .lightbox-img {
-    max-width: 90%;
-    max-height: 80%;
-    border-radius: 4px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    max-width: 95%;
+    max-height: 85%;
     border: 2px solid white;
+    border-radius: 4px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    object-fit: contain;
 }
 
-/* Botão de Fechar */
 .lightbox-close {
     position: absolute;
     top: 20px; 
-    right: 30px;
+    right: 25px;
     color: white; 
-    font-size: 40px; 
+    font-size: 45px; 
     cursor: pointer;
-    font-family: sans-serif;
     font-weight: bold;
-    z-index: 10000;
+    z-index: 100000; /* Botão fecha acima da imagem */
+    line-height: 1;
 }
-.lightbox-close:hover {
-    color: #ff4444;
+.lightbox-close:hover { color: #ff4444; }
+
+.lightbox-caption {
+    color: #eee; 
+    margin-top: 15px; 
+    font-size: 16px; 
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    background: rgba(0,0,0,0.5);
+    padding: 5px 15px;
+    border-radius: 20px;
 }
 
-/* Legenda opcional */
-.lightbox-caption {
-    color: #fff;
-    margin-top: 15px;
-    font-size: 16px;
-    text-align: center;
+/* Botões de Navegação (Setas) */
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    font-size: 30px;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 100002; /* Acima da imagem */
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+    user-select: none;
 }
+
+.lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-prev { left: 20px; }
+.nav-next { right: 20px; }
+
+/* Esconde setas se tiver só uma foto (controlado via JS) */
+.lightbox-nav.hidden { display: none; }

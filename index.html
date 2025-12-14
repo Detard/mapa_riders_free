@@ -16,7 +16,9 @@
             </button>
         </div>
         <div class="topbar-right">
-            <img src="icones/icones_menu/riders_free.png" alt="Riders Free" class="logo-estado">
+            <a href="https://www.instagram.com/ridersfree086/" target="_blank" title="Instagram Riders Free">
+                <img src="icones/icones_menu/riders_free.png" alt="Riders Free" class="logo-estado">
+            </a>
         </div>
     </header>
 
@@ -58,11 +60,13 @@
                         <div class="legenda-item"><img src="icones/icones_camadas/cachoerias.svg"><span>Cachoeiras</span></div>
                         <div class="legenda-item"><img src="icones/icones_camadas/barragem.svg"><span>Barragens</span></div>
                         <div class="legenda-item"><img src="icones/icones_camadas/praia.svg"><span>Praias</span></div>
-                        <div class="legenda-item"><img src="icones/icones_camadas/parque.svg"><span>Balneários</span></div> <div class="legenda-item"><img src="icones/icones_camadas/serra_da_capivara.svg"><span>Serra da Capivara</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/parque.svg"><span>Balneários</span></div> 
+                        <div class="legenda-item"><img src="icones/icones_camadas/serra_da_capivara.svg"><span>Serra da Capivara</span></div>
                         <div class="legenda-item"><img src="icones/icones_camadas/delta_do_rio_parnaiba.svg"><span>Delta do Parnaíba</span></div>
                         <div class="legenda-item"><img src="icones/icones_camadas/museu.svg"><span>Museus</span></div>
                         <div class="legenda-item"><img src="icones/icones_camadas/bens_tombados.svg"><span>Bens Tombados</span></div>
-                        <div class="legenda-item"><img src="icones/icones_camadas/outros_locais.svg"><span>Outros Locais</span></div> </div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/outros_locais.svg"><span>Outros Locais</span></div> 
+                    </div>
                 </div>
 
                 <div id="panel-adicionar" class="panel-section">
@@ -109,6 +113,7 @@
                             </div>
 
                             <input type="hidden" id="admin-tipo-atual">
+                            <input type="hidden" id="nome-original">
 
                             <div class="filter-group">
                                 <label>Nome do Lugar</label>
@@ -130,14 +135,23 @@
                                 <label>Classificação</label>
                                 <select id="campo-Classificação" class="input-padrao" required>
                                     <option value="">Selecione...</option>
+                                    
                                     <option value="Viagem Realizada" class="opt-viagem">Viagem Realizada</option>
+                                    
                                     <option value="Hotel">Hotel / Pousada</option>
                                     <option value="Cachoeira">Cachoeira</option>
                                     <option value="Barragem">Barragem</option>
                                     <option value="Museu">Museu</option>
-                                    <option value="Parque">Parque/Ecoturismo</option>
+                                    
+                                    <option value="Balneário">Balneário</option>
+                                    
                                     <option value="Praia">Praia</option>
-                                    <option value="Ponto Encontro">Ponto de Encontro</option>
+                                    
+                                    <option value="Delta">Delta do Parnaíba</option>
+                                    <option value="Serra da Capivara">Serra da Capivara</option>
+                                    <option value="Bem Tombado">Bem Tombado</option>
+                                    
+                                    <option value="Outros">Outros Locais</option>
                                 </select>
                             </div>
 
@@ -187,12 +201,9 @@
 
                             <div class="filter-group" style="margin-top: 15px;">
                                 <label>Links e Imagens</label>
-                                
                                 <input type="text" id="campo-Link Google Maps" class="input-padrao" placeholder="Link Google Maps">
-                                
                                 <label style="font-size:11px; color:#666; margin-top:10px; display:block;">Fotos (Separe links diretos por vírgula para criar Carrossel, ou cole link da pasta)</label>
                                 <textarea id="campo-Link Fotos Drive" class="input-padrao" rows="3" placeholder="Ex: https://site.com/foto1.jpg, https://site.com/foto2.jpg"></textarea>
-                                
                                 <input type="text" id="campo-Rede Social do Local" class="input-padrao" placeholder="Link do Instagram ou Facebook" style="margin-top:5px;">
                             </div>
 
@@ -204,23 +215,70 @@
                 </div>
 
                 <div id="panel-sobre" class="panel-section">
+                    
+                    <style>
+                        .btn-social-custom {
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            gap: 10px; 
+                            background: #fff; 
+                            color: #333; 
+                            text-decoration: none; 
+                            padding: 12px 20px; 
+                            border-radius: 30px; 
+                            font-weight: bold; 
+                            font-size: 14px; 
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.15); 
+                            border: 1px solid #f0f0f0; 
+                            width: 85%; 
+                            margin: 0 auto;
+                            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Animação suave */
+                        }
+                        
+                        /* O EFEITO QUANDO PASSA O MOUSE */
+                        .btn-social-custom:hover {
+                            transform: translateY(-4px); /* Sobe o botão */
+                            box-shadow: 0 8px 15px rgba(0,0,0,0.2); /* Sombra fica forte */
+                            border-color: #ddd;
+                        }
+
+                        /* Ajuste para o container do desenvolvedor */
+                        .dev-footer {
+                            margin-top: 30px;
+                            padding-top: 20px;
+                            border-top: 1px solid #eee;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
+                            align-items: center;
+                        }
+                    </style>
+
                     <h3>Riders Free Map</h3>
                     <p>O <strong>Mapa Riders Free</strong> é a ferramenta oficial do grupo para registrar nossas viagens, planejar novos destinos e mapear as belezas naturais do Piauí e arredores.</p>
                     
-                    <h4 style="margin-top: 20px; color: #333;">Funcionalidades:</h4>
-                    <ul class="lista-sobre">
-                        <li><strong>🗺️ Rotas:</strong> Histórico visual de onde o grupo já passou.</li>
-                        <li><strong>📍 Pontos:</strong> Cachoeiras, barragens e locais para turismo.</li>
-                        <li><strong>🏍️ Planejamento:</strong> Ferramenta para sugerir novos "rolês".</li>
-                    </ul>
+                    <div style="margin: 30px 0; text-align: center; display: flex; flex-direction: column; gap: 15px;">
+                        
+                        <p style="font-size: 14px; color: #333; font-weight: bold; margin-bottom: 5px;">Siga no Instagram:</p>
+
+                        <a href="https://www.instagram.com/ridersfree086/" target="_blank" class="btn-social-custom">
+                            <img src="icones/icones_menu/instagram_colorido.png" style="width: 24px; height: 24px;" alt="Instagram">
+                            @ridersfree086
+                        </a>
+
+                    </div>
 
                     <div class="dev-footer">
-                        <p>Desenvolvido por:</p>
-                        <strong>Lucas Mendes</strong>
-                        <a href="https://wa.me/5586995520586" target="_blank" class="btn-whatsapp" title="Fale comigo no WhatsApp"></a>
+                        <p style="margin: 0; color: #666; font-size: 13px;">Desenvolvido por:</p>
+                        <strong style="font-size: 16px; margin-bottom: 5px;">Lucas Mendes</strong>
+                        
+                        <a href="https://www.instagram.com/lucas.m_0/" target="_blank" class="btn-social-custom">
+                            <img src="icones/icones_menu/instagram_colorido.png" style="width: 24px; height: 24px;" alt="Instagram">
+                            @lucas.m_0
+                        </a>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -235,26 +293,21 @@
             </div>
 
             <div id="layer-menu" class="layer-control-container minimized">
-                
                 <div class="layer-control-header" onclick="toggleLayerMenu()">
                     <span>Camadas</span>
                     <span class="toggle-icon">▼</span>
                 </div>
-
                 <div class="layer-control-content">
-                    
                     <div class="layer-group-title" style="margin-top:0;">Viagens</div>
                     <label class="layer-option">
                         <input type="checkbox" id="check-viagens" checked onchange="toggleLayer('Viagem Realizada', this.checked)">
                         Viagens do Grupo
                     </label>
-
                     <div class="layer-group-title">Hospedagem</div>
                     <label class="layer-option">
                         <input type="checkbox" onchange="toggleLayer('Hotel', this.checked)">
                         Hotéis / Pousadas
                     </label>
-
                     <div class="layer-group-title">Natureza & Turismo</div>
                     <label class="layer-option">
                         <input type="checkbox" onchange="toggleLayer('Balneário', this.checked)">
@@ -276,7 +329,6 @@
                         <input type="checkbox" onchange="toggleLayer('Delta', this.checked)">
                         Delta do Parnaíba
                     </label>
-
                     <div class="layer-group-title">Cultura & História</div>
                     <label class="layer-option">
                         <input type="checkbox" onchange="toggleLayer('Museu', this.checked)">
@@ -290,7 +342,6 @@
                         <input type="checkbox" onchange="toggleLayer('Serra da Capivara', this.checked)">
                         Serra da Capivara
                     </label>
-
                     <div class="layer-group-title">Geral</div>
                     <label class="layer-option">
                         <input type="checkbox" onchange="toggleLayer('Outros', this.checked)">
@@ -298,9 +349,24 @@
                     </label>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="lightbox-overlay" class="lightbox-overlay" onclick="fecharImagem(event)">
+        <span class="lightbox-close" onclick="fecharImagem(event)">×</span>
+        <button id="btn-prev" class="lightbox-nav nav-prev" onclick="mudarImagem(-1, event)">&#10094;</button>
+        <button id="btn-next" class="lightbox-nav nav-next" onclick="mudarImagem(1, event)">&#10095;</button>
+        <img id="lightbox-img" class="lightbox-img" src="" referrerpolicy="no-referrer">
+        <div id="lightbox-caption" class="lightbox-caption"></div>
     </div>
 
     <script>
+        // === CONFIGURAÇÃO DA API ===
+        const API_URL = "https://script.google.com/macros/s/AKfycbzu2RKdYFoDmzXeWBDVUt2JJ8FoX2hgBjq18jgN5NT_hMq8gEA6djoZXgMRihu0yJFlEg/exec";
+        
+        const HASH_SENHA = "4ac3bd3806bcb91535b6684ca53e78c0b04fe08c3048e05e095318e02fc30b15";
+
+        // === MENU E INTERFACE ===
         const toggleBtn = document.getElementById('menu-toggle');
         const closeBtnMobile = document.getElementById('btn-close-sidebar-mobile');
         const sidebarContainer = document.getElementById('sidebar-container');
@@ -315,17 +381,28 @@
         mobileOverlay.addEventListener('click', closeSidebar);
         if(closeBtnMobile) closeBtnMobile.addEventListener('click', closeSidebar);
 
+        // --- RESET DO MENU ---
         iconItems.forEach(item => {
             item.addEventListener('click', () => {
                 iconItems.forEach(i => i.classList.remove('active'));
-                panels.forEach(p => p.classList.remove('active'));
+                panels.forEach(p => {
+                    p.classList.remove('active');
+                    p.scrollTop = 0; 
+                });
+                
                 item.classList.add('active');
                 const targetId = item.getAttribute('data-target');
                 document.getElementById(targetId).classList.add('active');
+                
+                if (targetId !== 'panel-adicionar') {
+                    sairModoAdmin();
+                }
+
                 if(sidebarContainer.classList.contains('closed')) sidebarContainer.classList.remove('closed');
             });
         });
 
+        // === MAPA ===
         function mudarBase(tipo) {
             document.querySelectorAll('.layer-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('btn-' + tipo).classList.add('active');
@@ -342,21 +419,75 @@
             }
         }
 
-        const SENHA_MESTRA = "123";
+        function toggleLayerMenu() {
+            const menu = document.getElementById('layer-menu');
+            const icon = menu.querySelector('.toggle-icon');
+            menu.classList.toggle('minimized');
+            icon.innerHTML = menu.classList.contains('minimized') ? '&#9660;' : '&#10005;';
+        }
+
+        // === CRIPTOGRAFIA PARA VALIDAÇÃO VISUAL ===
+        async function gerarHash(texto) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(texto);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // === AUTH & ADMIN ===
         function iniciarAuth(tipo) {
             document.querySelector(`#wrapper-${tipo} .btn-auth`).style.display = 'none';
             document.querySelector(`#wrapper-${tipo} .password-container`).style.display = 'flex';
             document.getElementById(`pass-${tipo}`).focus();
         }
+
         function verificarEnter(event, tipo) { if (event.key === "Enter") validarSenha(tipo); }
-        function validarSenha(tipo) {
+
+        async function validarSenha(tipo) {
             const input = document.getElementById(`pass-${tipo}`);
-            if (input.value === SENHA_MESTRA) {
-                input.value = '';
+            const senhaDigitada = input.value;
+            const btnOk = input.nextElementSibling;
+
+            if (!senhaDigitada) return;
+
+            // Feedback visual
+            input.style.opacity = "0.7";
+            btnOk.innerText = "⏳";
+            
+            // 1. Gera a Hash do que foi digitado
+            const hashDigitada = await gerarHash(senhaDigitada);
+
+            // 2. Compara com a Hash Segura
+            if (hashDigitada === HASH_SENHA) {
+                // Senha correta!
+                input.style.opacity = "1";
+                input.style.borderColor = "#4CAF50";
+                btnOk.innerText = "→";
+                
+                // Envia "login" pro Google só pra esquentar a conexão (opcional, mas bom)
+                fetch(API_URL, {
+                    method: "POST", 
+                    mode: "no-cors", 
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({acao: "login", senha: senhaDigitada})
+                });
+
                 abrirPainelAdmin(tipo);
             } else {
-                input.style.borderColor = 'red';
-                setTimeout(() => input.style.borderColor = '#ccc', 500);
+                // Senha errada
+                input.style.opacity = "1";
+                input.style.borderColor = "red";
+                btnOk.innerText = "→";
+                
+                // Treme o input
+                input.animate([
+                    { transform: 'translateX(0)' },
+                    { transform: 'translateX(-5px)' },
+                    { transform: 'translateX(5px)' },
+                    { transform: 'translateX(0)' }
+                ], { duration: 200, iterations: 2 });
             }
         }
         
@@ -366,25 +497,34 @@
             document.getElementById('admin-tipo-atual').value = tipo;
             document.getElementById('titulo-modo').innerText = tipo === 'viagens' ? 'Gerenciar Viagens' : 'Gerenciar Locais';
             
+            const isViagem = (tipo === 'viagens');
             const optViagem = document.querySelector('.opt-viagem');
-            if(tipo === 'lugares') {
-                optViagem.style.display = 'none';
-                document.getElementById('campos-viagem-extra').style.display = 'none';
-            } else {
-                optViagem.style.display = 'block';
-                document.getElementById('campos-viagem-extra').style.display = 'block';
-            }
+            if (optViagem) optViagem.style.display = isViagem ? 'block' : 'none';
+            document.getElementById('campos-viagem-extra').style.display = isViagem ? 'block' : 'none';
 
-            const iframe = document.getElementById('map-frame');
-            if(iframe && iframe.contentWindow.obterDadosParaEdicao) {
-                const lista = iframe.contentWindow.obterDadosParaEdicao(tipo);
-                atualizarSelectEdicao(lista);
-            }
+            // Carrega lista para edição
+            setTimeout(() => {
+                const iframe = document.getElementById('map-frame');
+                if(iframe && iframe.contentWindow && iframe.contentWindow.obterDadosParaEdicao) {
+                    const lista = iframe.contentWindow.obterDadosParaEdicao(tipo);
+                    atualizarSelectEdicao(lista);
+                } else {
+                    setTimeout(() => abrirPainelAdmin(tipo), 1500);
+                }
+            }, 500);
         }
 
         function atualizarSelectEdicao(lista) {
             const select = document.getElementById('lista-locais-existentes');
             select.innerHTML = '';
+            
+            if(!lista || lista.length === 0) {
+                const option = document.createElement('option');
+                option.text = "(Carregando lista...)";
+                select.appendChild(option);
+                return;
+            }
+
             lista.forEach(item => {
                 const option = document.createElement('option');
                 option.value = item.id;
@@ -395,10 +535,28 @@
 
         function mudarModoEdicao() {
             const id = document.getElementById('seletor-edicao').value;
-            if(id === 'novo') {
-                document.getElementById('form-dados').reset();
-                return;
-            }
+            
+            // === LIMPEZA MANUAL FORÇADA ===
+            // Seleciona todos os campos do formulário
+            const campos = document.querySelectorAll('#form-dados input, #form-dados select, #form-dados textarea');
+            
+            campos.forEach(campo => {
+                // Lista de campos que NÃO devem ser apagados
+                const ignorar = ['seletor-edicao', 'admin-tipo-atual'];
+                
+                // Se o campo não estiver na lista de ignorar, apaga ele
+                if (!ignorar.includes(campo.id)) {
+                    campo.value = "";
+                }
+            });
+
+            // Garante que o campo oculto de "Nome Antigo" também seja limpo
+            document.getElementById('nome-original').value = "";
+
+            // Se for "novo", para por aqui (tudo já foi limpo acima)
+            if(id === 'novo') return;
+
+            // Se for edição, busca e preenche
             const iframe = document.getElementById('map-frame');
             if(iframe && iframe.contentWindow.obterDadosPorId) {
                 const dados = iframe.contentWindow.obterDadosPorId(id);
@@ -414,6 +572,11 @@
             });
             if(d['Latitude']) document.getElementById('campo-Latitude').value = d['Latitude'];
             if(d['Longitude']) document.getElementById('campo-Longitude').value = d['Longitude'];
+            
+            // PREENCHE NOME ORIGINAL PARA O BACKEND SABER QUE É EDIÇÃO
+            if(d['Nome do Lugar']) {
+                document.getElementById('nome-original').value = d['Nome do Lugar'];
+            }
         }
 
         function sairModoAdmin() {
@@ -421,20 +584,131 @@
             document.getElementById('auth-buttons-container').style.display = 'block';
             document.querySelectorAll('.password-container').forEach(e => e.style.display = 'none');
             document.querySelectorAll('.btn-auth').forEach(e => e.style.display = 'flex');
-        }
-        // Função para abrir/fechar o menu de camadas com troca de ícone
-        function toggleLayerMenu() {
-            const menu = document.getElementById('layer-menu');
-            const icon = menu.querySelector('.toggle-icon');
             
-            menu.classList.toggle('minimized');
+            // Limpa campos de senha visualmente
+            document.getElementById('pass-viagens').value = '';
+            document.getElementById('pass-lugares').value = '';
+        }
 
-            // Se NÃO tiver a classe 'minimized', significa que está ABERTO
-            if (!menu.classList.contains('minimized')) {
-                icon.innerHTML = '&#10005;'; // Código para o X
-                // Ou se preferir um X mais simples, use: icon.innerText = 'X';
-            } else {
-                icon.innerHTML = '&#9660;'; // Código para o Triângulo para baixo (▼)
+        // === SALVAR DADOS ===
+        async function salvarDados() {
+            const btnSalvar = document.querySelector('.btn-aplicar');
+            const textoOriginal = btnSalvar.innerText;
+            
+            const tipo = document.getElementById('admin-tipo-atual').value;
+            const senhaDigitada = document.getElementById(`pass-${tipo}`).value;
+            const nomeAntigo = document.getElementById('nome-original').value;
+
+            // Validação dupla (Hash aqui também antes de enviar)
+            const hash = await gerarHash(senhaDigitada);
+            if(hash !== HASH_SENHA) {
+                alert("Senha incorreta. Acesso negado.");
+                sairModoAdmin();
+                return;
+            }
+
+            const dados = {
+                acao: "salvar", 
+                senha: senhaDigitada,
+                tipo: tipo,
+                nome_antigo: nomeAntigo, 
+                
+                nome: document.getElementById('campo-Nome do Lugar').value,
+                cidade: document.getElementById('campo-Cidade').value,
+                uf: document.getElementById('campo-UF').value,
+                classificacao: document.getElementById('campo-Classificação').value,
+                lat: document.getElementById('campo-Latitude').value,
+                lng: document.getElementById('campo-Longitude').value,
+                dist_trilha: document.getElementById('campo-Distacia da Trilha').value,
+                nivel_trilha: document.getElementById('campo-Nível da Trilha').value,
+                epoca: document.getElementById('campo-Época do Ano com Água').value,
+                entrada: document.getElementById('campo-Entrada').value,
+                valor: document.getElementById('campo-Valor da Entrada').value,
+                data: document.getElementById('campo-Data da Viagem/Bate e Volta').value,
+                km_total: document.getElementById('campo-Quilometragem Total (ida e volta)').value,
+                desc_viagem: document.getElementById('campo-Descrição Sobre a Viagem').value,
+                estrada: document.getElementById('campo-Descrição da Estrada').value,
+                link_mapa: document.getElementById('campo-Link Google Maps').value,
+                link_fotos: document.getElementById('campo-Link Fotos Drive').value,
+                social: document.getElementById('campo-Rede Social do Local').value
+            };
+
+            btnSalvar.innerText = "Enviando...";
+            btnSalvar.disabled = true;
+
+            fetch(API_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            })
+            .then(() => {
+                alert("✅ Dados enviados com sucesso!\nA planilha será atualizada em breve.");
+                document.getElementById('form-dados').reset();
+                sairModoAdmin();
+            })
+            .catch(error => {
+                console.error("Erro:", error);
+                alert("❌ Erro de conexão.");
+            })
+            .finally(() => {
+                btnSalvar.innerText = textoOriginal;
+                btnSalvar.disabled = false;
+            });
+        }
+
+        // === GALERIA ===
+        let imagensAtuais = [];
+        let indiceAtual = 0;
+
+        window.abrirGaleria = function(listaLinks, index, legenda) {
+            try {
+                imagensAtuais = (typeof listaLinks === 'string') ? JSON.parse(listaLinks) : listaLinks;
+                indiceAtual = index;
+                const overlay = document.getElementById('lightbox-overlay');
+                const caption = document.getElementById('lightbox-caption');
+                const btnPrev = document.getElementById('btn-prev');
+                const btnNext = document.getElementById('btn-next');
+
+                atualizarImagemLightbox();
+                caption.innerText = legenda || '';
+                
+                if (imagensAtuais.length > 1) {
+                    btnPrev.style.display = 'flex';
+                    btnNext.style.display = 'flex';
+                } else {
+                    btnPrev.style.display = 'none';
+                    btnNext.style.display = 'none';
+                }
+                overlay.style.display = 'flex';
+                document.addEventListener('keydown', navegarTeclado);
+            } catch (e) { console.error(e); }
+        }
+
+        function atualizarImagemLightbox() {
+            document.getElementById('lightbox-img').src = imagensAtuais[indiceAtual];
+        }
+
+        window.mudarImagem = function(direcao, event) {
+            if(event) event.stopPropagation();
+            indiceAtual += direcao;
+            if (indiceAtual >= imagensAtuais.length) indiceAtual = 0;
+            else if (indiceAtual < 0) indiceAtual = imagensAtuais.length - 1;
+            atualizarImagemLightbox();
+        }
+
+        window.fecharImagem = function(event) {
+            if (event && (event.target.id === 'lightbox-img' || event.target.tagName === 'BUTTON')) return;
+            document.getElementById('lightbox-overlay').style.display = 'none';
+            document.getElementById('lightbox-img').src = '';
+            document.removeEventListener('keydown', navegarTeclado);
+        }
+
+        function navegarTeclado(e) {
+            if (document.getElementById('lightbox-overlay').style.display === 'flex') {
+                if (e.key === 'ArrowLeft') window.mudarImagem(-1);
+                if (e.key === 'ArrowRight') window.mudarImagem(1);
+                if (e.key === 'Escape') window.fecharImagem();
             }
         }
     </script>
