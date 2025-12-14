@@ -1,229 +1,328 @@
 // =========================================
-// 1. CONFIGURAÇÃO E DADOS
+// 1. LINKS DAS PLANILHAS
 // =========================================
-
-// Mapeamento: Arquivo GeoJSON -> Ícone
-const configuracaoCamadas = [
-    { arquivo: 'barragem_pi.geojson', tipo: 'Barragem', icone: 'barragem.svg' },
-    { arquivo: 'bens_tombados_pi.geojson', tipo: 'Bem Tombado', icone: 'bens_tombados.svg' },
-    { arquivo: 'cachoeiras_pi.geojson', tipo: 'Cachoeira', icone: 'cachoerias.svg' }, 
-    { arquivo: 'delta_do_rio_parnaiba_pi.geojson', tipo: 'Delta', icone: 'delta_do_rio_parnaiba.svg' },
-    { arquivo: 'ecoturismo_pi.geojson', tipo: 'Ecoturismo', icone: 'parque.svg' }, 
-    { arquivo: 'museu_pi.geojson', tipo: 'Museu', icone: 'museu.svg' },
-    { arquivo: 'parques_pi.geojson', tipo: 'Parque', icone: 'parque.svg' },
-    { arquivo: 'praias_pi.geojson', tipo: 'Praia', icone: 'praia.svg' },
-    { arquivo: 'serra_da_capivara_pi.geojson', tipo: 'Patrimônio', icone: 'serra_da_capivara.svg' }
-    // Futuro: 'viagens_grupo.geojson' -> 'riders_free.svg'
-];
-
-// Estados que podem ser carregados sob demanda
-const estadosVizinhos = ['MA', 'CE', 'PE', 'BA', 'TO']; 
+const URL_PLANILHA_VIAGENS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQavLOwuqDZaqsPmsr7MaDYKp-FYNq2cNXLtxeFLr3ruunBhmY8TBRlHycwXiicnzDAK9HNT2ZNwcxK/pub?gid=0&single=true&output=csv";
+const URL_PLANILHA_PONTOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQIC0CWTecFsAAj75DdMCCtCLu1Tlj0Vv2IL_DXwdatGXrBhN1NRA_dUEh_FuIU3OuZI4EAgTqVFafx/pub?gid=1754543034&single=true&output=csv";
 
 // =========================================
-// 2. INICIALIZAÇÃO DO MAPA
+// 2. CONFIGURAÇÃO DE ÍCONES
 // =========================================
+const iconMap = {
+    'Viagem Realizada': 'riders_free.svg',
+    'Hotel': 'hotel.svg',
+    'Cachoeira': 'cachoerias.svg',
+    'Barragem': 'barragem.svg',
+    'Praia': 'praia.svg',
+    'Parque': 'parque.svg',
+    'Delta': 'delta_do_rio_parnaiba.svg',
+    'Museu': 'museu.svg',
+    'Bem Tombado': 'bens_tombados.svg',
+    'Serra da Capivara': 'serra_da_capivara.svg',
+    'Balneário': 'parque.svg',
+    'Outros': 'outros_locais.svg'
+};
 
-var initialBounds = [[-12, -48], [-2, -38]]; // Foco no PI aproximado
-
-const map = L.map('map', {
-    zoomControl: false,
-    maxZoom: 18,
-    minZoom: 5
-}).fitBounds(initialBounds);
-
+// =========================================
+// 3. MAPA E INICIALIZAÇÃO
+// =========================================
+var initialBounds = [[-12, -48], [-2, -38]]; 
+const map = L.map('map', { zoomControl: false, maxZoom: 18, minZoom: 5 }).fitBounds(initialBounds);
 var hash = new L.Hash(map);
 
-// Camadas Base
-const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-});
+const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' });
+const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { attribution: '© Google Maps' });
+osmLayer.addTo(map);
 
-const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-    attribution: '© Google Maps'
-});
-
-osmLayer.addTo(map); // Padrão
-
-// Controle Externo (Botões do Menu)
 window.trocarCamadaBase = function(tipo) {
-    if (tipo === 'mapa') {
-        map.addLayer(osmLayer);
-        map.removeLayer(satelliteLayer);
-    } else if (tipo === 'satelite') {
-        map.addLayer(satelliteLayer);
-        map.removeLayer(osmLayer);
+    if (tipo === 'mapa') { map.addLayer(osmLayer); map.removeLayer(satelliteLayer); } 
+    else { map.addLayer(satelliteLayer); map.removeLayer(osmLayer); }
+};
+
+// =========================================
+// 4. CAMADAS (LAYERS)
+// =========================================
+const layers = {};
+const clusterConfig = {
+    maxClusterRadius: 15, spiderfyOnMaxZoom: true, showCoverageOnHover: false, disableClusteringAtZoom: 8
+};
+
+for (let key in iconMap) {
+    layers[key] = L.markerClusterGroup(clusterConfig);
+}
+
+if(layers['Viagem Realizada']) {
+    map.addLayer(layers['Viagem Realizada']);
+}
+
+window.toggleLayer = function(nomeCategoria, checked) {
+    const layerAlvo = layers[nomeCategoria];
+    if (layerAlvo) {
+        if (checked) map.addLayer(layerAlvo);
+        else map.removeLayer(layerAlvo);
     }
 };
 
 // =========================================
-// 3. ESTILOS E ÍCONES
+// 5. FUNÇÕES AUXILIARES (LINK DRIVE & LIGHTBOX)
 // =========================================
 
-// Função para criar Ícones (Tamanho Reduzido)
-function criarIcone(nomeArquivoSvg) {
+function criarIcone(nomeArquivo) {
     return L.icon({
-        iconUrl: `icones/icones_camadas/${nomeArquivoSvg}`,
-        iconSize: [22, 22],   // Reduzido de 32x32 para 22x22
-        iconAnchor: [11, 22], // Ajustado o pino (metade da largura, fundo da altura)
-        popupAnchor: [0, -22] // Onde o balão abre (logo acima do ícone)
+        iconUrl: `icones/icones_camadas/${nomeArquivo}`,
+        iconSize: [22, 22], iconAnchor: [11, 22], popupAnchor: [0, -22]
     });
 }
 
-// Estilo dos Estados (Municípios)
-function styleEstados(feature) {
-    // Se for Piauí (código 22 ou propriedade específica), cor diferente
-    // Aqui assumimos que PI.geojson é o base carregado
-    const isPiaui = true; // Por enquanto só carregamos PI explicitamente
-
-    return {
-        fillColor: isPiaui ? '#1a1a1a' : '#555555', // PI mais escuro/destacado, outros cinza
-        weight: 1,
-        opacity: 1,
-        color: 'white', // Borda branca
-        fillOpacity: 0.1 // Transparência alta para ver o mapa base
-    };
+function csvToJSON(csvText) {
+    const lines = csvText.trim().split("\n");
+    const headers = lines[0].split(",").map(h => h.trim().replace(/"/g, ''));
+    return lines.slice(1).map(line => {
+        const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
+        let obj = {}; headers.forEach((header, i) => { obj[header] = values[i] || ""; });
+        return obj;
+    });
 }
 
+// Converte link do Drive para Link de Imagem Direta
+function converterLinkDrive(url) {
+    if (!url.includes('drive.google.com')) return url;
+    
+    // Tenta extrair o ID com Regex (mais seguro)
+    // Pega o que está depois de /d/ e antes de / ou ?
+    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    
+    if (match && match[1]) {
+        const id = match[1];
+        // URL direta de exibição do Google
+        return `https://drive.google.com/uc?export=view&id=${id}`;
+    }
+    return url;
+}
+
+// Injeta o HTML do visualizador na página
+function injectLightbox() {
+    if (!document.getElementById('lightbox-overlay')) {
+        const div = document.createElement('div');
+        div.id = 'lightbox-overlay';
+        div.className = 'lightbox-overlay';
+        div.innerHTML = `
+            <span class="lightbox-close" onclick="fecharImagem()">×</span>
+            <img id="lightbox-img" class="lightbox-img" src="">
+            <div id="lightbox-caption" class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(div);
+        
+        // Fechar ao clicar fora da imagem
+        div.addEventListener('click', (e) => {
+            if (e.target === div) fecharImagem();
+        });
+    }
+}
+// Chama a injeção ao carregar
+injectLightbox();
+
+// Funções Globais para abrir/fechar
+window.abrirImagem = function(src, legenda) {
+    const overlay = document.getElementById('lightbox-overlay');
+    const img = document.getElementById('lightbox-img');
+    const caption = document.getElementById('lightbox-caption');
+    
+    img.src = src;
+    caption.innerText = legenda || '';
+    overlay.style.display = 'flex';
+};
+
+window.fecharImagem = function() {
+    document.getElementById('lightbox-overlay').style.display = 'none';
+    document.getElementById('lightbox-img').src = '';
+};
+
 // =========================================
-// 4. CARREGAMENTO DE DADOS (AGRUPAMENTO MINIMIZADO)
+// 6. CARREGAMENTO DE DADOS
 // =========================================
 
-window.clusterPontos = L.markerClusterGroup({
-    // --- CONFIGURAÇÃO PARA QUASE NÃO AGRUPAR ---
-    maxClusterRadius: 15,       // Padrão é 80. Com 20, só agrupa se estiverem "colados".
-    spiderfyOnMaxZoom: true,    // Importante: Se dois pontos tiverem a MESMA coordenada, ele abre em "aranha" ao clicar.
-    showCoverageOnHover: false, // Remove a área azul ao passar o mouse (estética mais limpa).
-    zoomToBoundsOnClick: true,
-    disableClusteringAtZoom: 8 // A partir do zoom 10 (nível regional), desativa agrupamento totalmente.
-});
+function carregarDadosGoogle(url, tipoOrigem) {
+    if(url.includes("COLE_O_LINK")) return;
 
-map.addLayer(window.clusterPontos);
+    fetch(url).then(r => r.text()).then(csvText => {
+        const dados = csvToJSON(csvText);
+        dados.forEach(d => {
+            let lat = parseFloat(d['Latitude']?.replace(',', '.'));
+            let lng = parseFloat(d['Longitude']?.replace(',', '.'));
 
-// Carregar PI.geojson (Base)
-fetch('data/PI.geojson')
-    .then(res => res.json())
-    .then(data => {
-        L.geoJSON(data, {
-            style: styleEstados,
-            onEachFeature: function(feature, layer) {
-                // Tooltip simples com nome do município
-                if(feature.properties && (feature.properties.nm_mun || feature.properties.NM_MUN)) {
-                   layer.bindTooltip(feature.properties.nm_mun || feature.properties.NM_MUN, {
-                       direction: 'center', className: 'lbl-municipio'
-                   });
-                }
-            }
-        }).addTo(map);
-    })
-    .catch(err => console.error("Erro ao carregar PI.geojson", err));
+            if (!isNaN(lat) && !isNaN(lng)) {
+                let rawCat = d['Classificação'] || tipoOrigem || "";
+                let lowerCat = rawCat.toLowerCase().trim();
+                let cat = 'Outros';
 
-// Carregar Camadas de Pontos Turísticos
-const promises = configuracaoCamadas.map(camada => 
-    fetch(`data/${camada.arquivo}`)
-        .then(res => {
-            if(!res.ok) throw new Error(`Falha em ${camada.arquivo}`);
-            return res.json();
-        })
-        .then(geojson => {
-            return { geojson, config: camada };
-        })
-        .catch(err => {
-            console.warn(`Arquivo não encontrado ou erro: ${camada.arquivo}`);
-            return null;
-        })
-);
+                if(tipoOrigem === 'Viagem') cat = 'Viagem Realizada';
+                else if (lowerCat.includes('delta')) cat = 'Delta';
+                else if (lowerCat.includes('serra da capivara') || lowerCat.includes('patrimônio') || lowerCat.includes('patrimonio')) cat = 'Serra da Capivara';
+                else if (lowerCat.includes('balneário') || lowerCat.includes('balneario')) cat = 'Balneário';
+                else if (lowerCat.includes('parque') || lowerCat.includes('ecoturismo') || lowerCat.includes('reserva') || lowerCat.includes('lagoa') || lowerCat.includes('cânion')) cat = 'Parque';
+                else if (lowerCat.includes('cachoeira')) cat = 'Cachoeira';
+                else if (lowerCat.includes('barragem') || lowerCat.includes('açude') || lowerCat.includes('acude')) cat = 'Barragem';
+                else if (lowerCat.includes('museu')) cat = 'Museu';
+                else if (lowerCat.includes('praia')) cat = 'Praia';
+                else if (lowerCat.includes('tombado') || lowerCat.includes('histórico')) cat = 'Bem Tombado';
+                else if (lowerCat.includes('hotel') || lowerCat.includes('pousada')) cat = 'Hotel';
+                
+                if (!layers[cat]) cat = 'Outros';
 
-Promise.all(promises).then(resultados => {
-    resultados.forEach(item => {
-        if(!item) return;
+                let nomeIcone = iconMap[cat] || 'outros_locais.svg';
 
-        const layer = L.geoJSON(item.geojson, {
-            pointToLayer: function(feature, latlng) {
-                return L.marker(latlng, { 
-                    icon: criarIcone(item.config.icone) 
+                const marker = L.marker([lat, lng], {
+                    icon: criarIcone(nomeIcone),
+                    zIndexOffset: (cat === 'Viagem Realizada') ? 1000 : 0
                 });
-            },
-            onEachFeature: function(feature, layer) {
-                configurarPopup(feature, layer, item.config.tipo);
+
+                marker.dadosLocais = { ...d, origem: tipoOrigem, categoria_final: cat };
+                
+                marker.bindPopup(`
+                    <div style="font-family:'Segoe UI'; min-width:200px;">
+                        <strong style="color:#1a1a1a; font-size:12px;">${cat}</strong>
+                        <h3 style="margin:5px 0; color:#333;">${d['Nome do Lugar']}</h3>
+                        <button onclick="window.abrirDetalhesMarker(this)" style="background:#1a1a1a; color:white; width:100%; border:none; padding:6px; border-radius:4px; margin-top:5px; cursor:pointer;">Ver Detalhes</button>
+                    </div>
+                `);
+                marker.on('popupopen', () => { window.markerAtual = marker; });
+
+                if (layers[cat]) layers[cat].addLayer(marker);
             }
         });
-        window.clusterPontos.addLayer(layer);
     });
-});
-
-// =========================================
-// 5. POPUP E INTERAÇÃO SIDEBAR
-// =========================================
-
-function configurarPopup(feature, layer, tipoCategoria) {
-    const p = feature.properties;
-    // Tenta achar nome e descrição em propriedades comuns variadas
-    const nome = p.nome || p.NOME || p.Name || "Local sem nome";
-    const desc = p.descricao || p.description || p.municipio || "";
-    
-    // Armazena dados globalmente para sidebar acessar se precisar (para edição no admin)
-    const idUnico =  L.Util.stamp(layer);
-    window.dadosLocais = window.dadosLocais || {};
-    window.dadosLocais[idUnico] = { ...p, tipoCategoria, nome };
-
-    const html = `
-        <div style="font-family: 'Segoe UI'; min-width: 200px;">
-            <strong style="color: #1a1a1a; font-size: 14px; text-transform: uppercase;">${tipoCategoria}</strong>
-            <h3 style="margin: 5px 0; color: #333;">${nome}</h3>
-            <p style="margin: 5px 0; color: #666;">${desc}</p>
-            <button onclick="window.abrirDetalhesSidebar('${idUnico}')" 
-                style="background: #1a1a1a; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 5px;">
-                Ver Detalhes
-            </button>
-        </div>
-    `;
-    layer.bindPopup(html);
 }
 
-// Função chamada pelo botão do Popup
-window.abrirDetalhesSidebar = function(id) {
-    const dados = window.dadosLocais[id];
-    if (!dados) return;
+carregarDadosGoogle(URL_PLANILHA_VIAGENS, 'Viagem');
+carregarDadosGoogle(URL_PLANILHA_PONTOS, 'Ponto Turístico');
 
-    if (window.parent && window.parent.document) {
-        const docPai = window.parent.document;
-        
-        // Abre sidebar
-        const sidebar = docPai.getElementById('sidebar-container');
-        sidebar.classList.remove('closed');
-        
-        // Ativa aba correta
-        docPai.querySelectorAll('.icon-item').forEach(i => i.classList.remove('active'));
-        docPai.querySelector('[data-target="panel-locais"]').classList.add('active');
-        
-        docPai.querySelectorAll('.panel-section').forEach(p => p.classList.remove('active'));
-        docPai.getElementById('panel-locais').classList.add('active');
+fetch('data/PI.geojson').then(r=>r.json()).then(d => {
+    L.geoJSON(d, { style: { fillColor:'#1a1a1a', weight:1, color:'white', fillOpacity:0.1 } }).addTo(map);
+}).catch(e => console.log("Sem base PI"));
 
-        // Preenche HTML
-        const divConteudo = docPai.getElementById('conteudo-detalhes');
-        
-        let htmlContent = `
-            <div class="detalhe-item">
-                <strong>Nome</strong>
-                <span>${dados.nome}</span>
+// =========================================
+// 7. SIDEBAR E DETALHES
+// =========================================
+
+window.abrirDetalhesMarker = function(btn) {
+    if (window.markerAtual && window.markerAtual.dadosLocais) window.abrirDetalhesSidebar(window.markerAtual.dadosLocais);
+};
+
+window.abrirDetalhesSidebar = function(dados) {
+    const docPai = window.parent.document;
+    const sidebar = docPai.getElementById('sidebar-container');
+    sidebar.classList.remove('closed');
+    
+    docPai.querySelectorAll('.icon-item').forEach(i => i.classList.remove('active'));
+    docPai.querySelector('[data-target="panel-locais"]').classList.add('active');
+    docPai.querySelectorAll('.panel-section').forEach(p => p.classList.remove('active'));
+    docPai.getElementById('panel-locais').classList.add('active');
+
+    const divConteudo = docPai.getElementById('conteudo-detalhes');
+    
+    // Ícone Social no Título
+    let htmlSocial = '';
+    const socialLink = dados['Rede Social do Local'];
+    if (socialLink && socialLink.length > 5) {
+        let btnClass = '';
+        if(socialLink.includes('instagram.com')) btnClass = 'btn-social-insta';
+        else if(socialLink.includes('facebook.com')) btnClass = 'btn-social-face';
+        if(btnClass) {
+            htmlSocial = `<a href="${socialLink}" target="_blank" class="btn-social ${btnClass}" title="Rede Social" style="width:24px; height:24px;"></a>`;
+        }
+    }
+
+    let html = `
+        <div style="margin-bottom:15px;">
+            <span style="background:#eee; color:#555; padding:2px 8px; border-radius:4px; font-size:11px; text-transform:uppercase;">${dados.categoria_final}</span>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                <h2 style="color:#1a1a1a; margin:0; font-size:22px; line-height: 1.2;">${dados['Nome do Lugar']}</h2>
+                ${htmlSocial}
             </div>
-            <div class="detalhe-item">
-                <strong>Categoria</strong>
-                <span>${dados.tipoCategoria}</span>
-            </div>
-        `;
+            <p style="color:#666; font-size:14px; margin-top:4px;">📍 ${dados['Cidade']} - ${dados['UF']}</p>
+        </div>
+    `;
+
+    // Carrossel de Fotos
+    const linkFotos = dados['Link Fotos Drive'];
+    if (linkFotos && linkFotos.length > 5) {
+        // Se tiver vírgula, entende que são múltiplos links
+        if (linkFotos.includes(',')) {
+            const urls = linkFotos.split(',');
+            html += `<div class="carousel-container">`;
+            
+            urls.forEach(rawUrl => {
+                const urlLimpa = rawUrl.trim();
+                if(urlLimpa) {
+                    // Converte para link direto
+                    const srcImagem = converterLinkDrive(urlLimpa);
+                    // IMPORTANTE: onclick abre a função abrirImagem()
+                    html += `<img src="${srcImagem}" class="carousel-img" onclick="window.abrirImagem('${srcImagem}', '${dados['Nome do Lugar']}')">`;
+                }
+            });
+            html += `</div><p style="font-size:11px; color:#888; text-align:center; margin-top:-15px; margin-bottom:20px;">(Clique para ampliar)</p>`;
         
-        // Renderiza outras propriedades genéricas
-        for (let key in dados) {
-            if(['nome', 'tipoCategoria', 'id', 'fid', 'geometry'].includes(key)) continue;
-            htmlContent += `
-                <div class="detalhe-item">
-                    <strong>${key.replace(/_/g, " ")}</strong>
-                    <span>${dados[key]}</span>
-                </div>
+        } else {
+            // Apenas 1 link (Provavelmente pasta)
+            html += `
+                <a href="${linkFotos}" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:10px; background:#0352AA; color:white; text-decoration:none; padding:12px; border-radius:8px; margin-bottom:20px; font-weight:bold;">
+                    <img src="icones/icones_menu/camera.png" style="width:20px; filter:brightness(0) invert(1);"> Ver Álbum de Fotos
+                </a>
             `;
         }
-
-        divConteudo.innerHTML = htmlContent;
     }
+
+    // Grid de Informações
+    html += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">`;
+    const campos = [
+        {k: 'Data da Viagem/Bate e Volta', l: '📅 Data'},
+        {k: 'Quilometragem Total (ida e volta)', l: '🏍️ KM Total (ida e volta)'},
+        {k: 'Distacia da Trilha', l: '🥾 Trilha'},
+        {k: 'Nível da Trilha', l: '📊 Nível'},
+        {k: 'Entrada', l: '🎫 Entrada'},
+        {k: 'Valor da Entrada', l: '💲 Valor'},
+        {k: 'Época do Ano com Água', l: '💧 Época'}
+    ];
+    campos.forEach(c => {
+        if(dados[c.k]) html += `<div style="background:#f9f9f9; padding:10px; border-radius:6px;"><strong style="display:block; font-size:11px; color:#888;">${c.l}</strong><span style="font-size:14px; color:#333;">${dados[c.k]}</span></div>`;
+    });
+    html += `</div>`;
+
+    const textos = [{k: 'Descrição Sobre a Viagem', l: 'Sobre a Viagem'}, {k: 'Descrição da Estrada', l: 'Condições da Estrada'}];
+    textos.forEach(c => {
+        if(dados[c.k]) html += `<div style="margin-bottom:15px;"><strong style="color:#1a1a1a; font-size:13px; display:block; margin-bottom:5px;">${c.l}</strong><p style="font-size:14px; color:#555; background:#fff; border-left:3px solid #ccc; padding-left:10px; margin:0;">${dados[c.k]}</p></div>`;
+    });
+
+    if (dados['Link Google Maps']) {
+        html += `<a href="${dados['Link Google Maps']}" target="_blank" style="display:block; text-align:center; background:#fff; border:2px solid #1a1a1a; color:#1a1a1a; padding:10px; border-radius:6px; text-decoration:none; font-weight:bold; margin-top:20px;">🗺️ Abrir no Google Maps</a>`;
+    }
+
+    divConteudo.innerHTML = html;
+};
+
+// Funções de Admin (Mantidas)
+window.obterDadosParaEdicao = function(tipoAdmin) {
+    const lista = [];
+    for (let key in layers) {
+        const grupo = layers[key];
+        const ehViagem = (key === 'Viagem Realizada');
+        if (tipoAdmin === 'viagens' && ehViagem) {
+            grupo.eachLayer(l => lista.push({ id: L.Util.stamp(l), nome: l.dadosLocais['Nome do Lugar'] }));
+        }
+        else if (tipoAdmin === 'lugares' && !ehViagem) {
+            grupo.eachLayer(l => lista.push({ id: L.Util.stamp(l), nome: l.dadosLocais['Nome do Lugar'] }));
+        }
+    }
+    return lista;
+};
+
+window.obterDadosPorId = function(id) {
+    let dados = null;
+    for (let key in layers) {
+        layers[key].eachLayer(l => {
+            if(L.Util.stamp(l) == id) dados = l.dadosLocais;
+        });
+        if(dados) break;
+    }
+    return dados;
 };

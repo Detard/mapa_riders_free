@@ -482,3 +482,217 @@ iframe {
     border-radius: 6px;
     border: 1px solid #ccd;
 }
+
+/* =========================================
+   NOVO: ÍCONES DE REDES SOCIAIS (Insta/Face)
+   ========================================= */
+.social-links-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.btn-social {
+    display: block;
+    width: 32px;
+    height: 32px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-social:hover {
+    transform: scale(1.1);
+}
+
+/* Classes específicas para as imagens */
+.btn-social-insta {
+    background-image: url('../icones/icones_menu/instagram_preto.png');
+}
+.btn-social-insta:hover {
+    background-image: url('../icones/icones_menu/instagram_colorido.png');
+}
+
+.btn-social-face {
+    background-image: url('../icones/icones_menu/facebook_preto.png');
+}
+.btn-social-face:hover {
+    background-image: url('../icones/icones_menu/facebook_colorido.png');
+}
+
+/* =========================================
+   CONTROLE DE CAMADAS (RETRÁTIL)
+   ========================================= */
+.layer-control-container {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    z-index: 1000;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    overflow: hidden; /* Importante para o efeito retrátil */
+    transition: all 0.3s ease;
+}
+
+/* Cabeçalho que será clicado para abrir/fechar */
+.layer-control-header {
+    padding: 12px 15px;
+    background-color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid transparent;
+}
+
+.layer-control-header:hover {
+    background-color: #f9f9f9;
+}
+
+/* Ícone da seta */
+.toggle-icon {
+    font-size: 12px;
+    transition: transform 0.3s;
+}
+
+/* Área onde ficam os checkboxes */
+.layer-control-content {
+    padding: 0 10px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+/* ESTADO FECHADO (Padrão ou via JS) */
+.layer-control-container.minimized .layer-control-content {
+    display: none;
+}
+
+.layer-control-container.minimized .layer-control-header {
+    border-bottom: none;
+}
+
+.layer-control-container.minimized .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+/* Títulos internos */
+.layer-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    margin-top: 8px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid #eee;
+}
+
+.layer-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+}
+
+.layer-option input[type="checkbox"] {
+    accent-color: #1a1a1a;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* =========================================
+   ESTILO DO CARROSSEL DE FOTOS
+   ========================================= */
+.carousel-container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    scroll-behavior: smooth;
+    /* Barra de rolagem fina */
+    scrollbar-width: thin; 
+    scrollbar-color: #1a1a1a #f0f0f0;
+}
+
+.carousel-img {
+    height: 120px;       /* Altura fixa */
+    min-width: 160px;    /* Largura mínima */
+    object-fit: cover;   /* Corta a imagem para caber sem distorcer */
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.carousel-img:hover {
+    transform: scale(1.05);
+    border-color: #1a1a1a;
+}
+
+/* =========================================
+   VISUALIZADOR DE IMAGEM (LIGHTBOX)
+   ========================================= */
+.lightbox-overlay {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(0,0,0,0.9); /* Fundo escuro */
+    z-index: 9999; /* Fica por cima de tudo */
+    display: none; /* Começa escondido */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* A imagem grande */
+.lightbox-img {
+    max-width: 90%;
+    max-height: 80%;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    border: 2px solid white;
+}
+
+/* Botão de Fechar */
+.lightbox-close {
+    position: absolute;
+    top: 20px; 
+    right: 30px;
+    color: white; 
+    font-size: 40px; 
+    cursor: pointer;
+    font-family: sans-serif;
+    font-weight: bold;
+    z-index: 10000;
+}
+.lightbox-close:hover {
+    color: #ff4444;
+}
+
+/* Legenda opcional */
+.lightbox-caption {
+    color: #fff;
+    margin-top: 15px;
+    font-size: 16px;
+    text-align: center;
+}

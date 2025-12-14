@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa Riders Free</title>
-    
     <link rel="icon" href="icones/icones_menu/riders_free_flavicon.png" type="image/png">
     <link rel="stylesheet" href="css/layout.css">
 </head>
@@ -16,7 +15,6 @@
                 <img src="icones/icones_menu/legenda.svg" alt="Menu">
             </button>
         </div>
-
         <div class="topbar-right">
             <img src="icones/icones_menu/riders_free.png" alt="Riders Free" class="logo-estado">
         </div>
@@ -25,18 +23,17 @@
     <div class="main-container">
         
         <div id="sidebar-container" class="sidebar-container closed">
-            
             <button id="btn-close-sidebar-mobile" class="btn-close-mobile">×</button>
 
             <aside class="icon-bar">
                 <div class="icon-item active" data-target="panel-locais" title="Locais">
                     <img src="icones/icones_menu/helmet.png" alt="Locais">
                 </div>
-                <div class="icon-item" data-target="panel-adicionar" title="Adicionar Local">
-                    <img src="icones/icones_menu/cloud-computing.png" alt="Adicionar">
-                </div>
                 <div class="icon-item" data-target="panel-legendas" title="Legendas">
                     <img src="icones/icones_menu/legendas.png" alt="Legendas">
+                </div>
+                <div class="icon-item" data-target="panel-adicionar" title="Gestão">
+                    <img src="icones/icones_menu/cloud-computing.png" alt="Gestão">
                 </div>
                 <div class="icon-item" data-target="panel-sobre" title="Sobre">
                     <img src="icones/icones_menu/informacao.png" alt="Sobre">
@@ -48,151 +45,161 @@
                 <div id="panel-locais" class="panel-section active">
                     <h3>Detalhes do Local</h3>
                     <div id="conteudo-detalhes">
-                        <p class="placeholder-text">Selecione um ponto turístico ou rota no mapa para ver as informações aqui.</p>
+                        <p class="placeholder-text">Selecione um ponto no mapa para ver detalhes.</p>
                     </div>
                 </div>
 
-<div id="panel-adicionar" class="panel-section">
-    <h3>Gestão de Dados</h3>
-    <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Área restrita para administradores do grupo.</p>
-    
-    <div id="auth-buttons-container">
-        
-        <div class="auth-wrapper" id="wrapper-viagens">
-            <button class="btn-auth" onclick="iniciarAuth('viagens')">
-                <span>Atualizar Viagens Realizadas</span>
-                <img src="icones/icones_menu/padlock.png" class="padlock-icon" alt="Trancado">
-            </button>
-            
-            <div class="password-container" style="display: none;">
-                <input type="password" id="pass-viagens" class="input-pass" placeholder="Senha..." onkeyup="verificarEnter(event, 'viagens')">
-                <button class="btn-ok" onclick="validarSenha('viagens')">→</button>
-            </div>
-        </div>
-
-        <div style="height: 15px;"></div> <div class="auth-wrapper" id="wrapper-lugares">
-            <button class="btn-auth" onclick="iniciarAuth('lugares')">
-                <span>Atualizar Pontos Turísticos</span>
-                <img src="icones/icones_menu/padlock.png" class="padlock-icon" alt="Trancado">
-            </button>
-
-            <div class="password-container" style="display: none;">
-                <input type="password" id="pass-lugares" class="input-pass" placeholder="Senha..." onkeyup="verificarEnter(event, 'lugares')">
-                <button class="btn-ok" onclick="validarSenha('lugares')">→</button>
-            </div>
-        </div>
-
-    </div>
-
-    <div id="form-admin-container" style="display: none;">
-        
-        <div class="form-header-admin">
-            <h4 id="titulo-modo">Editando: ...</h4>
-            <button onclick="sairModoAdmin()" class="btn-sair">Voltar</button>
-        </div>
-
-        <form id="form-dados" onsubmit="event.preventDefault(); salvarDados();">
-            
-            <div class="filter-group highlight-group">
-                <label>O que você deseja fazer?</label>
-                <select id="seletor-edicao" class="input-padrao" onchange="mudarModoEdicao()">
-                    <option value="novo">➕ Adicionar Novo Local</option>
-                    <optgroup label="-- Editar Existente --" id="lista-locais-existentes">
-                        </optgroup>
-                </select>
-            </div>
-
-            <hr style="border: 0; border-top: 1px dashed #ccc; margin: 15px 0;">
-
-            <input type="hidden" id="admin-tipo-atual">
-
-            <div class="filter-group">
-                <label>Nome do Local</label>
-                <input type="text" id="campo-nome" class="input-padrao" required>
-            </div>
-
-            <div class="filter-group">
-                <label>Categoria</label>
-                <select id="campo-categoria" class="input-padrao" required>
-                    <option value="">Selecione...</option>
-                    <option value="Viagem Realizada">Viagem do Grupo</option>
-                    <option value="Cachoeira">Cachoeira</option>
-                    <option value="Barragem">Barragem</option>
-                    <option value="Museu">Museu</option>
-                    <option value="Parque">Parque/Ecoturismo</option>
-                    <option value="Praia">Praia</option>
-                    <option value="Ponto Encontro">Ponto de Encontro</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>Coordenadas</label>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="campo-lat" class="input-padrao" placeholder="Latitude">
-                    <input type="text" id="campo-long" class="input-padrao" placeholder="Longitude">
-                </div>
-                <small onclick="alert('Função de clicar no mapa para pegar coordenada será implementada')" style="cursor:pointer; color:#0352AA;">📍 Capturar do Mapa</small>
-            </div>
-
-            <div class="filter-group">
-                <label>Descrição / Obs</label>
-                <textarea id="campo-desc" class="input-padrao" rows="3"></textarea>
-            </div>
-
-            <div class="filter-group">
-                <label>Link da Pasta (Fotos/Drive)</label>
-                <input type="url" id="campo-link" class="input-padrao" placeholder="https://...">
-            </div>
-
-            <div class="filter-actions">
-                <button type="submit" class="btn-aplicar" id="btn-salvar-texto">Salvar Dados</button>
-            </div>
-        </form>
-    </div>
-</div>
-
                 <div id="panel-legendas" class="panel-section">
                     <h3>Categorias</h3>
-
                     <div class="legenda-grupo">
                         <h4>TURISMO & ROTAS</h4>
-                        
-                        <div class="legenda-item">
-                            <img src="icones/icones_camadas/riders_free.svg" alt="Riders Free">
-                            <span>Viagens do Grupo</span>
+                        <div class="legenda-item"><img src="icones/icones_camadas/riders_free.svg"><span>Viagens do Grupo</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/hotel.svg"><span>Hotel / Pousada</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/cachoerias.svg"><span>Cachoeiras</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/barragem.svg"><span>Barragens</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/praia.svg"><span>Praias</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/parque.svg"><span>Balneários</span></div> <div class="legenda-item"><img src="icones/icones_camadas/serra_da_capivara.svg"><span>Serra da Capivara</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/delta_do_rio_parnaiba.svg"><span>Delta do Parnaíba</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/museu.svg"><span>Museus</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/bens_tombados.svg"><span>Bens Tombados</span></div>
+                        <div class="legenda-item"><img src="icones/icones_camadas/outros_locais.svg"><span>Outros Locais</span></div> </div>
+                </div>
+
+                <div id="panel-adicionar" class="panel-section">
+                    <h3>Gestão de Dados</h3>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 20px;">Área administrativa.</p>
+                    
+                    <div id="auth-buttons-container">
+                        <div class="auth-wrapper" id="wrapper-viagens">
+                            <button class="btn-auth" onclick="iniciarAuth('viagens')">
+                                <span>Atualizar Viagens Realizadas</span>
+                                <img src="icones/icones_menu/padlock.png" class="padlock-icon">
+                            </button>
+                            <div class="password-container" style="display: none;">
+                                <input type="password" id="pass-viagens" class="input-pass" placeholder="Senha..." onkeyup="verificarEnter(event, 'viagens')">
+                                <button class="btn-ok" onclick="validarSenha('viagens')">→</button>
+                            </div>
                         </div>
-                        <div class="legenda-item">
-                            <img src="icones/icones_camadas/cachoerias.svg" alt="Cachoeiras">
-                            <span>Cachoeiras</span>
+                        <div style="height: 15px;"></div>
+                        <div class="auth-wrapper" id="wrapper-lugares">
+                            <button class="btn-auth" onclick="iniciarAuth('lugares')">
+                                <span>Atualizar Pontos Turísticos</span>
+                                <img src="icones/icones_menu/padlock.png" class="padlock-icon">
+                            </button>
+                            <div class="password-container" style="display: none;">
+                                <input type="password" id="pass-lugares" class="input-pass" placeholder="Senha..." onkeyup="verificarEnter(event, 'lugares')">
+                                <button class="btn-ok" onclick="validarSenha('lugares')">→</button>
+                            </div>
                         </div>
-                        <div class="legenda-item">
-                            <img src="icones/icones_camadas/barragem.svg" alt="Barragens">
-                            <span>Barragens</span>
+                    </div>
+
+                    <div id="form-admin-container" style="display: none;">
+                        <div class="form-header-admin">
+                            <h4 id="titulo-modo">Editando...</h4>
+                            <button onclick="sairModoAdmin()" class="btn-sair">Voltar</button>
                         </div>
-                        <div class="legenda-item">
-                            <img src="icones/icones_camadas/praia.svg" alt="Praias">
-                            <span>Praias</span>
-                        </div>
-                        <div class="legenda-item">
-                            <img src="icones/icones_camadas/parque.svg" alt="Parques">
-                            <span>Parques / Ecoturismo</span>
-                        </div>
-                         <div class="legenda-item">
-                            <img src="icones/icones_camadas/serra_da_capivara.svg" alt="Serra da Capivara">
-                            <span>Serra da Capivara</span>
-                        </div>
-                        <div class="legenda-item">
-                            <img src="icones/icones_camadas/delta_do_rio_parnaiba.svg" alt="Delta">
-                            <span>Delta do Parnaíba</span>
-                        </div>
-                        <div class="legenda-item">
-                            <img src="icones/icones_camadas/museu.svg" alt="Museus">
-                            <span>Museus</span>
-                        </div>
-                        <div class="legenda-item">
-                            <img src="icones/icones_camadas/bens_tombados.svg" alt="Bens Tombados">
-                            <span>Bens Tombados</span>
-                        </div>
+
+                        <form id="form-dados" onsubmit="event.preventDefault(); salvarDados();">
+                            <div class="filter-group highlight-group">
+                                <label>O que você deseja fazer?</label>
+                                <select id="seletor-edicao" class="input-padrao" onchange="mudarModoEdicao()">
+                                    <option value="novo">➕ Adicionar Novo Local</option>
+                                    <optgroup label="-- Editar Existente --" id="lista-locais-existentes"></optgroup>
+                                </select>
+                            </div>
+
+                            <input type="hidden" id="admin-tipo-atual">
+
+                            <div class="filter-group">
+                                <label>Nome do Lugar</label>
+                                <input type="text" id="campo-Nome do Lugar" class="input-padrao" required>
+                            </div>
+
+                            <div style="display: flex; gap: 10px;">
+                                <div class="filter-group" style="flex: 1;">
+                                    <label>Cidade</label>
+                                    <input type="text" id="campo-Cidade" class="input-padrao">
+                                </div>
+                                <div class="filter-group" style="width: 60px;">
+                                    <label>UF</label>
+                                    <input type="text" id="campo-UF" class="input-padrao" value="PI">
+                                </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <label>Classificação</label>
+                                <select id="campo-Classificação" class="input-padrao" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Viagem Realizada" class="opt-viagem">Viagem Realizada</option>
+                                    <option value="Hotel">Hotel / Pousada</option>
+                                    <option value="Cachoeira">Cachoeira</option>
+                                    <option value="Barragem">Barragem</option>
+                                    <option value="Museu">Museu</option>
+                                    <option value="Parque">Parque/Ecoturismo</option>
+                                    <option value="Praia">Praia</option>
+                                    <option value="Ponto Encontro">Ponto de Encontro</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group highlight-group">
+                                <label>Coordenadas</label>
+                                <div style="display: flex; gap: 5px;">
+                                    <input type="text" id="campo-Latitude" class="input-padrao" placeholder="-0.000000">
+                                    <input type="text" id="campo-Longitude" class="input-padrao" placeholder="-0.000000">
+                                </div>
+                            </div>
+
+                            <div class="filter-group">
+                                <label>Detalhes da Visita</label>
+                                <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                                    <input type="text" id="campo-Distacia da Trilha" class="input-padrao" placeholder="Dist. Trilha">
+                                    <select id="campo-Nível da Trilha" class="input-padrao">
+                                        <option value="">Nível Trilha...</option>
+                                        <option value="Fácil">Fácil</option>
+                                        <option value="Médio">Médio</option>
+                                        <option value="Difícil">Difícil</option>
+                                    </select>
+                                </div>
+                                <input type="text" id="campo-Época do Ano com Água" class="input-padrao" placeholder="Época com Água">
+                            </div>
+
+                            <div class="filter-group">
+                                <label>Custos</label>
+                                <div style="display: flex; gap: 5px;">
+                                    <select id="campo-Entrada" class="input-padrao">
+                                        <option value="">Tipo Entrada...</option>
+                                        <option value="Livre">Livre</option>
+                                        <option value="Paga">Paga</option>
+                                    </select>
+                                    <input type="text" id="campo-Valor da Entrada" class="input-padrao" placeholder="Valor (R$)">
+                                </div>
+                            </div>
+
+                            <div id="campos-viagem-extra" style="border-top: 1px dashed #ccc; padding-top: 10px; margin-top: 10px;">
+                                <label style="color:#0352AA;">Detalhes da Viagem</label>
+                                <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                                    <input type="text" id="campo-Data da Viagem/Bate e Volta" class="input-padrao" placeholder="Data">
+                                    <input type="text" id="campo-Quilometragem Total (ida e volta)" class="input-padrao" placeholder="KM Total">
+                                </div>
+                                <textarea id="campo-Descrição Sobre a Viagem" class="input-padrao" rows="2" placeholder="Sobre a viagem..."></textarea>
+                                <textarea id="campo-Descrição da Estrada" class="input-padrao" rows="2" placeholder="Condições da estrada..."></textarea>
+                            </div>
+
+                            <div class="filter-group" style="margin-top: 15px;">
+                                <label>Links e Imagens</label>
+                                
+                                <input type="text" id="campo-Link Google Maps" class="input-padrao" placeholder="Link Google Maps">
+                                
+                                <label style="font-size:11px; color:#666; margin-top:10px; display:block;">Fotos (Separe links diretos por vírgula para criar Carrossel, ou cole link da pasta)</label>
+                                <textarea id="campo-Link Fotos Drive" class="input-padrao" rows="3" placeholder="Ex: https://site.com/foto1.jpg, https://site.com/foto2.jpg"></textarea>
+                                
+                                <input type="text" id="campo-Rede Social do Local" class="input-padrao" placeholder="Link do Instagram ou Facebook" style="margin-top:5px;">
+                            </div>
+
+                            <div class="filter-actions">
+                                <button type="submit" class="btn-aplicar">Salvar</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -207,12 +214,11 @@
                         <li><strong>🏍️ Planejamento:</strong> Ferramenta para sugerir novos "rolês".</li>
                     </ul>
 
-<div class="dev-footer">
-    <p>Desenvolvido por:</p>
-    <strong>Lucas Mendes</strong>
-    
-    <a href="https://wa.me/5586995520586" target="_blank" class="btn-whatsapp" title="Fale comigo no WhatsApp"></a>
-</div>
+                    <div class="dev-footer">
+                        <p>Desenvolvido por:</p>
+                        <strong>Lucas Mendes</strong>
+                        <a href="https://wa.me/5586995520586" target="_blank" class="btn-whatsapp" title="Fale comigo no WhatsApp"></a>
+                    </div>
                 </div>
 
             </div>
@@ -227,7 +233,71 @@
                 <button id="btn-mapa" class="layer-btn active" onclick="mudarBase('mapa')">Mapa</button>
                 <button id="btn-satelite" class="layer-btn" onclick="mudarBase('satelite')">Satélite</button>
             </div>
-        </div>
+
+            <div id="layer-menu" class="layer-control-container minimized">
+                
+                <div class="layer-control-header" onclick="toggleLayerMenu()">
+                    <span>Camadas</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+
+                <div class="layer-control-content">
+                    
+                    <div class="layer-group-title" style="margin-top:0;">Viagens</div>
+                    <label class="layer-option">
+                        <input type="checkbox" id="check-viagens" checked onchange="toggleLayer('Viagem Realizada', this.checked)">
+                        Viagens do Grupo
+                    </label>
+
+                    <div class="layer-group-title">Hospedagem</div>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Hotel', this.checked)">
+                        Hotéis / Pousadas
+                    </label>
+
+                    <div class="layer-group-title">Natureza & Turismo</div>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Balneário', this.checked)">
+                        Balneários
+                    </label>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Cachoeira', this.checked)">
+                        Cachoeiras
+                    </label>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Barragem', this.checked)">
+                        Barragens
+                    </label>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Praia', this.checked)">
+                        Praias
+                    </label>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Delta', this.checked)">
+                        Delta do Parnaíba
+                    </label>
+
+                    <div class="layer-group-title">Cultura & História</div>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Museu', this.checked)">
+                        Museus
+                    </label>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Bem Tombado', this.checked)">
+                        Bens Tombados
+                    </label>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Serra da Capivara', this.checked)">
+                        Serra da Capivara
+                    </label>
+
+                    <div class="layer-group-title">Geral</div>
+                    <label class="layer-option">
+                        <input type="checkbox" onchange="toggleLayer('Outros', this.checked)">
+                        Outros Locais
+                    </label>
+                </div>
+            </div>
     </div>
 
     <script>
@@ -238,198 +308,135 @@
         const iconItems = document.querySelectorAll('.icon-item');
         const panels = document.querySelectorAll('.panel-section');
 
-        function toggleSidebar() {
-            sidebarContainer.classList.toggle('closed');
-        }
-
-        function closeSidebar() {
-            sidebarContainer.classList.add('closed');
-        }
+        function toggleSidebar() { sidebarContainer.classList.toggle('closed'); }
+        function closeSidebar() { sidebarContainer.classList.add('closed'); }
 
         toggleBtn.addEventListener('click', toggleSidebar);
         mobileOverlay.addEventListener('click', closeSidebar);
-        
-        if(closeBtnMobile) {
-            closeBtnMobile.addEventListener('click', closeSidebar);
-        }
+        if(closeBtnMobile) closeBtnMobile.addEventListener('click', closeSidebar);
 
         iconItems.forEach(item => {
             item.addEventListener('click', () => {
                 iconItems.forEach(i => i.classList.remove('active'));
                 panels.forEach(p => p.classList.remove('active'));
-
                 item.classList.add('active');
                 const targetId = item.getAttribute('data-target');
                 document.getElementById(targetId).classList.add('active');
-
-                document.querySelector('.content-panel').scrollTop = 0;
-
-                if(sidebarContainer.classList.contains('closed')) {
-                    sidebarContainer.classList.remove('closed');
-                }
+                if(sidebarContainer.classList.contains('closed')) sidebarContainer.classList.remove('closed');
             });
         });
 
         function mudarBase(tipo) {
             document.querySelectorAll('.layer-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('btn-' + tipo).classList.add('active');
-
             const iframe = document.getElementById('map-frame');
             if (iframe && iframe.contentWindow && iframe.contentWindow.trocarCamadaBase) {
                 iframe.contentWindow.trocarCamadaBase(tipo);
             }
         }
-        /* =========================================
-   LÓGICA DE ADMINISTRAÇÃO E SENHA
-   ========================================= */
 
-const SENHA_MESTRA = "123";
-
-// 1. Troca Botão -> Campo de Senha
-function iniciarAuth(tipo) {
-    // Esconde o botão normal
-    document.querySelector(`#wrapper-${tipo} .btn-auth`).style.display = 'none';
-    // Mostra o campo de senha
-    const passContainer = document.querySelector(`#wrapper-${tipo} .password-container`);
-    passContainer.style.display = 'flex';
-    
-    // Foca no input automaticamente
-    setTimeout(() => {
-        document.getElementById(`pass-${tipo}`).focus();
-    }, 100);
-}
-
-// 2. Cancela e volta ao botão normal
-function cancelarAuth(tipo) {
-    document.querySelector(`#wrapper-${tipo} .password-container`).style.display = 'none';
-    document.querySelector(`#wrapper-${tipo} .btn-auth`).style.display = 'flex';
-    document.getElementById(`pass-${tipo}`).value = ''; // Limpa senha
-}
-
-// 3. Verifica Enter no input
-function verificarEnter(event, tipo) {
-    if (event.key === "Enter") {
-        validarSenha(tipo);
-    }
-}
-
-// 4. Valida a Senha e Abre Painel
-function validarSenha(tipo) {
-    const input = document.getElementById(`pass-${tipo}`);
-    
-    if (input.value === SENHA_MESTRA) {
-        // Sucesso!
-        input.value = ''; // Limpa por segurança
-        abrirPainelAdmin(tipo);
-    } else {
-        // Erro visual
-        input.style.borderColor = 'red';
-        setTimeout(() => input.style.borderColor = '#1a1a1a', 500);
-    }
-}
-
-// 5. Configura o Painel para o tipo escolhido
-function abrirPainelAdmin(tipo) {
-    // Esconde a tela de botões
-    document.getElementById('auth-buttons-container').style.display = 'none';
-    // Mostra o formulário
-    document.getElementById('form-admin-container').style.display = 'block';
-    
-    // Define contexto
-    document.getElementById('admin-tipo-atual').value = tipo;
-    
-    const titulo = tipo === 'viagens' ? 'Gerenciar Viagens' : 'Gerenciar Pontos Turísticos';
-    document.getElementById('titulo-modo').innerText = titulo;
-
-    // Carrega a lista de itens existentes para edição
-    carregarOpcoesEdicao(tipo);
-}
-
-// 6. Sair do Painel
-function sairModoAdmin() {
-    document.getElementById('form-admin-container').style.display = 'none';
-    document.getElementById('auth-buttons-container').style.display = 'block';
-    
-    // Reseta estados dos botões
-    cancelarAuth('viagens');
-    cancelarAuth('lugares');
-}
-
-// 7. Lógica de "Carregar Dados para Editar"
-function carregarOpcoesEdicao(tipo) {
-    const select = document.getElementById('lista-locais-existentes');
-    select.innerHTML = ''; // Limpa anteriores
-
-    // Acessa os dados globais do mapa (definidos no script.js como window.dadosLocais)
-    // Filtra baseado no tipo de botão clicado
-    
-    if (window.dadosLocais) {
-        const ids = Object.keys(window.dadosLocais);
-        
-        ids.forEach(id => {
-            const item = window.dadosLocais[id];
-            
-            // Filtro Lógico simples:
-            // Se clicou em "Viagens", mostra só o que for "Viagem Realizada" (ou similar)
-            // Se clicou em "Lugares", mostra o resto.
-            
-            // Nota: Isso depende de como os dados estão vindo do GeoJSON. 
-            // Vou assumir uma verificação baseada na categoria/tipo que definimos no script.js
-            
-            let deveMostrar = false;
-            if (tipo === 'viagens' && item.tipoCategoria === 'Viagem do Grupo') {
-                deveMostrar = true; // Ajuste conforme o nome exato da categoria no JS
-            } else if (tipo === 'lugares' && item.tipoCategoria !== 'Viagem do Grupo') {
-                deveMostrar = true;
+        function toggleLayer(tipo, checked) {
+            const iframe = document.getElementById('map-frame');
+            if (iframe && iframe.contentWindow && iframe.contentWindow.toggleLayer) {
+                iframe.contentWindow.toggleLayer(tipo, checked);
             }
-
-            // Se não tivermos certeza da categoria ainda, mostra tudo por enquanto:
-            // deveMostrar = true; // (Descomente para testar se não aparecer nada)
-
-            if (deveMostrar) {
-                const option = document.createElement('option');
-                option.value = id; // O ID único do leaflet
-                option.text = item.nome || "Local sem nome";
-                select.appendChild(option);
-            }
-        });
-    }
-}
-
-// 8. Preencher formulário ao selecionar um item
-function mudarModoEdicao() {
-    const select = document.getElementById('seletor-edicao');
-    const idSelecionado = select.value;
-    const btnSalvar = document.getElementById('btn-salvar-texto');
-
-    if (idSelecionado === 'novo') {
-        // Limpa formulário
-        document.getElementById('form-dados').reset();
-        document.getElementById('seletor-edicao').value = 'novo'; // Mantém selecionado
-        btnSalvar.innerText = "Salvar Novo Local";
-    } else {
-        // Preenche com dados existentes
-        const dados = window.dadosLocais[idSelecionado];
-        if (dados) {
-            document.getElementById('campo-nome').value = dados.nome || '';
-            document.getElementById('campo-categoria').value = dados.tipoCategoria || ''; // Precisa bater com os values do select
-            document.getElementById('campo-desc').value = dados.descricao || dados.description || '';
-            
-            // Tenta extrair lat/long se for ponto
-            // Nota: GeoJSON guarda Longitude, Latitude. Leaflet usa Lat, Long.
-            // Isso é complexo de pegar reverso do layer agrupado, mas vamos tentar pelo properties se existir
-            // ou deixar em branco para o usuário preencher.
-            
-            btnSalvar.innerText = "Salvar Alterações";
         }
-    }
-}
 
-function salvarDados() {
-    alert("Dados capturados! Próximo passo: Integração com Google Sheets.");
-    // Aqui entrará o código do `fetch()` para o Google Apps Script
-}
+        const SENHA_MESTRA = "123";
+        function iniciarAuth(tipo) {
+            document.querySelector(`#wrapper-${tipo} .btn-auth`).style.display = 'none';
+            document.querySelector(`#wrapper-${tipo} .password-container`).style.display = 'flex';
+            document.getElementById(`pass-${tipo}`).focus();
+        }
+        function verificarEnter(event, tipo) { if (event.key === "Enter") validarSenha(tipo); }
+        function validarSenha(tipo) {
+            const input = document.getElementById(`pass-${tipo}`);
+            if (input.value === SENHA_MESTRA) {
+                input.value = '';
+                abrirPainelAdmin(tipo);
+            } else {
+                input.style.borderColor = 'red';
+                setTimeout(() => input.style.borderColor = '#ccc', 500);
+            }
+        }
+        
+        function abrirPainelAdmin(tipo) {
+            document.getElementById('auth-buttons-container').style.display = 'none';
+            document.getElementById('form-admin-container').style.display = 'block';
+            document.getElementById('admin-tipo-atual').value = tipo;
+            document.getElementById('titulo-modo').innerText = tipo === 'viagens' ? 'Gerenciar Viagens' : 'Gerenciar Locais';
+            
+            const optViagem = document.querySelector('.opt-viagem');
+            if(tipo === 'lugares') {
+                optViagem.style.display = 'none';
+                document.getElementById('campos-viagem-extra').style.display = 'none';
+            } else {
+                optViagem.style.display = 'block';
+                document.getElementById('campos-viagem-extra').style.display = 'block';
+            }
+
+            const iframe = document.getElementById('map-frame');
+            if(iframe && iframe.contentWindow.obterDadosParaEdicao) {
+                const lista = iframe.contentWindow.obterDadosParaEdicao(tipo);
+                atualizarSelectEdicao(lista);
+            }
+        }
+
+        function atualizarSelectEdicao(lista) {
+            const select = document.getElementById('lista-locais-existentes');
+            select.innerHTML = '';
+            lista.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.text = item.nome;
+                select.appendChild(option);
+            });
+        }
+
+        function mudarModoEdicao() {
+            const id = document.getElementById('seletor-edicao').value;
+            if(id === 'novo') {
+                document.getElementById('form-dados').reset();
+                return;
+            }
+            const iframe = document.getElementById('map-frame');
+            if(iframe && iframe.contentWindow.obterDadosPorId) {
+                const dados = iframe.contentWindow.obterDadosPorId(id);
+                if(dados) preencherCampos(dados);
+            }
+        }
+
+        function preencherCampos(d) {
+             const inputs = document.querySelectorAll('.input-padrao');
+             inputs.forEach(input => {
+                const chave = input.id.replace('campo-', '');
+                if(d[chave]) input.value = d[chave];
+            });
+            if(d['Latitude']) document.getElementById('campo-Latitude').value = d['Latitude'];
+            if(d['Longitude']) document.getElementById('campo-Longitude').value = d['Longitude'];
+        }
+
+        function sairModoAdmin() {
+            document.getElementById('form-admin-container').style.display = 'none';
+            document.getElementById('auth-buttons-container').style.display = 'block';
+            document.querySelectorAll('.password-container').forEach(e => e.style.display = 'none');
+            document.querySelectorAll('.btn-auth').forEach(e => e.style.display = 'flex');
+        }
+        // Função para abrir/fechar o menu de camadas com troca de ícone
+        function toggleLayerMenu() {
+            const menu = document.getElementById('layer-menu');
+            const icon = menu.querySelector('.toggle-icon');
+            
+            menu.classList.toggle('minimized');
+
+            // Se NÃO tiver a classe 'minimized', significa que está ABERTO
+            if (!menu.classList.contains('minimized')) {
+                icon.innerHTML = '&#10005;'; // Código para o X
+                // Ou se preferir um X mais simples, use: icon.innerText = 'X';
+            } else {
+                icon.innerHTML = '&#9660;'; // Código para o Triângulo para baixo (▼)
+            }
+        }
     </script>
-    
 </body>
 </html>
